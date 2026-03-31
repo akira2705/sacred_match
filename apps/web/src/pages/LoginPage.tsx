@@ -17,6 +17,11 @@ const demoCredentials = {
   password: "SacredMatch123!",
 };
 
+const adminCredentials = {
+  email: "admin@sacred-match.ng",
+  password: "Admin@Sacred1!",
+};
+
 const MAX_ATTEMPTS = 5;
 const LOCKOUT_MINUTES = 15;
 const LOCKOUT_MS = LOCKOUT_MINUTES * 60 * 1000;
@@ -170,12 +175,18 @@ export function LoginPage() {
         forgetRememberedLogin();
       }
 
+      const isAdmin = values.email === adminCredentials.email && values.password === adminCredentials.password;
       window.localStorage.setItem(
         "sacred-match-token",
-        response.token || "local-development-token",
+        response.token || (isAdmin ? "admin-development-token" : "local-development-token"),
       );
+      if (isAdmin) {
+        window.localStorage.setItem("sacred-match-role", "admin");
+      } else {
+        window.localStorage.removeItem("sacred-match-role");
+      }
       setMessage(response.message);
-      navigate(redirectTo);
+      navigate(isAdmin ? "/admin" : redirectTo);
     } catch (error) {
       const normalizedError = normalizeLoginError(error);
 
@@ -207,11 +218,14 @@ export function LoginPage() {
 
   function fillDemoCredentials() {
     setValue("email", demoCredentials.email, { shouldDirty: true, shouldTouch: true });
-    setValue("password", demoCredentials.password, {
-      shouldDirty: true,
-      shouldTouch: true,
-    });
+    setValue("password", demoCredentials.password, { shouldDirty: true, shouldTouch: true });
     setValue("rememberMe", true, { shouldDirty: true, shouldTouch: true });
+  }
+
+  function fillAdminCredentials() {
+    setValue("email", adminCredentials.email, { shouldDirty: true, shouldTouch: true });
+    setValue("password", adminCredentials.password, { shouldDirty: true, shouldTouch: true });
+    setValue("rememberMe", false, { shouldDirty: true, shouldTouch: true });
   }
 
   return (
@@ -299,29 +313,48 @@ export function LoginPage() {
                   >
                     Use demo credentials
                   </button>
+                  <button
+                    className="rounded-full border border-brand-clay/30 bg-brand-clay/10 px-6 py-3 text-sm font-semibold text-brand-clay transition hover:bg-brand-clay/15"
+                    onClick={fillAdminCredentials}
+                    type="button"
+                  >
+                    Use admin credentials
+                  </button>
                 </div>
               </form>
             </RevealOnScroll>
 
             <RevealOnScroll className="bg-brand-ink p-8 text-brand-cream sm:p-10" delay={120}>
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-gold">
-                Demo access
+                Test credentials
               </p>
-              <h2 className="mt-4 font-display text-4xl font-semibold text-white">
-                Seeded account for a quick product walkthrough
+              <h2 className="mt-4 font-display text-3xl font-semibold text-white">
+                Seeded accounts for a quick walkthrough
               </h2>
-              <div className="mt-6 rounded-[1.8rem] border border-white/10 bg-white/5 p-6">
-                <p className="text-xs uppercase tracking-[0.2em] text-brand-gold">Email</p>
-                <p className="mt-2 text-lg font-semibold text-white">{demoCredentials.email}</p>
-                <p className="mt-5 text-xs uppercase tracking-[0.2em] text-brand-gold">Password</p>
-                <p className="mt-2 text-lg font-semibold text-white">{demoCredentials.password}</p>
-              </div>
-              <div className="mt-6 grid gap-4 text-sm leading-7 text-brand-cream/80">
-                <p>Five failed password attempts trigger a 15-minute lockout on this device.</p>
-                <p>Use the remembered-login checkbox if you want the email field prefilled next time.</p>
-                <p>
-                  If the account does not exist yet, run <code className="rounded bg-white/10 px-2 py-1">npm run prisma:seed</code> after your database is up.
+
+              <div className="mt-6 rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold">
+                  Member account
                 </p>
+                <p className="mt-3 text-sm text-brand-cream/60">Email</p>
+                <p className="font-semibold text-white">{demoCredentials.email}</p>
+                <p className="mt-3 text-sm text-brand-cream/60">Password</p>
+                <p className="font-semibold text-white">{demoCredentials.password}</p>
+              </div>
+
+              <div className="mt-4 rounded-[1.5rem] border border-brand-clay/25 bg-brand-clay/10 p-5">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-clay">
+                  Admin account
+                </p>
+                <p className="mt-3 text-sm text-brand-cream/60">Email</p>
+                <p className="font-semibold text-white">{adminCredentials.email}</p>
+                <p className="mt-3 text-sm text-brand-cream/60">Password</p>
+                <p className="font-semibold text-white">{adminCredentials.password}</p>
+              </div>
+
+              <div className="mt-5 grid gap-3 text-sm leading-7 text-brand-cream/65">
+                <p>Five failed attempts trigger a 15-minute lockout.</p>
+                <p>Admin login redirects directly to <code className="rounded bg-white/10 px-2 py-0.5">/admin</code>.</p>
               </div>
             </RevealOnScroll>
           </div>
