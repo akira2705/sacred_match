@@ -63,7 +63,7 @@ const memberRoutePrefixes = [
 ];
 
 const desktopLinkClass =
-  "relative inline-flex h-11 shrink-0 items-center whitespace-nowrap rounded-full px-4 text-sm font-semibold tracking-tight text-brand-forest/82 transition-all duration-300 ease-out hover:-translate-y-[1px] hover:bg-white hover:text-brand-ink";
+  "relative inline-flex h-11 shrink-0 items-center whitespace-nowrap rounded-full px-4 text-sm font-semibold tracking-tight text-brand-forest/75 transition-all duration-300 ease-out hover:-translate-y-[1px] hover:bg-white hover:text-brand-ink";
 
 const measurementClass =
   "pointer-events-none absolute left-0 top-0 -z-10 opacity-0 [visibility:hidden]";
@@ -263,7 +263,7 @@ export function NavBar() {
 
   return (
     <header className="relative z-40 px-3 pt-3 sm:px-4">
-      <div className="mx-auto max-w-7xl rounded-[2rem] border border-white/80 bg-brand-cream/82 shadow-velvet backdrop-blur-2xl">
+      <div className="mx-auto max-w-7xl rounded-[2rem] border border-brand-forest/12 bg-brand-cream/90 shadow-velvet backdrop-blur-2xl">
         <div ref={rowRef} className="grid grid-cols-[minmax(0,auto)_1fr_auto] items-center gap-3 px-4 py-3 sm:px-6 lg:px-8">
           <Link
             ref={brandRef}
@@ -273,7 +273,7 @@ export function NavBar() {
             )}
             to="/"
           >
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[1.6rem] bg-brand-forest text-xl font-extrabold text-brand-cream shadow-[0_18px_40px_rgba(27,67,50,0.22)] transition-transform duration-500 group-hover:-rotate-3 group-hover:scale-[1.04]">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[1.6rem] bg-brand-forest text-xl font-extrabold text-brand-cream shadow-[0_18px_40px_rgba(43,27,110,0.28)] transition-transform duration-500 group-hover:-rotate-3 group-hover:scale-[1.04]">
               SM
             </div>
             <div className="min-w-0">
@@ -300,7 +300,7 @@ export function NavBar() {
 
           {layoutMode === "desktop" ? (
             <nav className="min-w-0 items-center justify-center lg:flex">
-              <div className="flex min-w-0 max-w-full items-center gap-1.5 rounded-full border border-brand-forest/10 bg-white/70 p-1.5 shadow-[0_14px_34px_rgba(8,28,21,0.06)]">
+              <div className="flex min-w-0 max-w-full items-center gap-1.5 rounded-full border border-brand-forest/10 bg-white/70 p-1.5 shadow-[0_14px_34px_rgba(43,27,110,0.07)]">
                 {navItems.map((item) => (
                   <NavLink
                     key={item.href}
@@ -308,7 +308,7 @@ export function NavBar() {
                       clsx(
                         desktopLinkClass,
                         isActive &&
-                          "bg-brand-forest text-white shadow-[0_10px_24px_rgba(27,67,50,0.2)] hover:bg-brand-forest hover:text-white",
+                          "bg-brand-forest text-white shadow-[0_10px_24px_rgba(43,27,110,0.25)] hover:bg-brand-forest hover:text-white",
                       )
                     }
                     end={item.end}
@@ -342,7 +342,7 @@ export function NavBar() {
                 ) : null}
 
                 <Link
-                  className="inline-flex h-11 shrink-0 items-center whitespace-nowrap rounded-full bg-brand-clay px-5 text-sm font-semibold text-white shadow-[0_18px_36px_rgba(181,101,73,0.28)] transition-all duration-300 hover:-translate-y-[1px] hover:bg-brand-gold hover:shadow-[0_22px_44px_rgba(212,163,115,0.28)]"
+                  className="inline-flex h-11 shrink-0 items-center whitespace-nowrap rounded-full bg-brand-clay px-5 text-sm font-semibold text-brand-ink shadow-[0_10px_28px_rgba(201,162,39,0.32)] transition-all duration-300 hover:-translate-y-[1px] hover:bg-brand-gold hover:shadow-[0_16px_40px_rgba(201,162,39,0.38)]"
                   to={primaryAction.href}
                 >
                   {primaryAction.label}
@@ -364,7 +364,7 @@ export function NavBar() {
                 {showInlineAction ? (
                   <Link
                     className={clsx(
-                      "inline-flex h-11 shrink-0 items-center whitespace-nowrap rounded-full bg-brand-clay text-sm font-semibold text-white shadow-[0_14px_30px_rgba(181,101,73,0.24)] transition-all duration-300 hover:-translate-y-[1px] hover:bg-brand-gold",
+                      "inline-flex h-11 shrink-0 items-center whitespace-nowrap rounded-full bg-brand-clay text-sm font-semibold text-brand-ink shadow-[0_10px_24px_rgba(201,162,39,0.28)] transition-all duration-300 hover:-translate-y-[1px] hover:bg-brand-gold",
                       layoutMode === "mobile" ? "px-3.5" : "px-4",
                     )}
                     to={primaryAction.href}
@@ -375,7 +375,7 @@ export function NavBar() {
 
                 <button
                   aria-label="Toggle navigation"
-                  className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[1.1rem] border border-brand-forest/15 bg-white/60 text-brand-forest shadow-[0_10px_26px_rgba(8,28,21,0.06)] transition-all duration-300 hover:-translate-y-[1px] hover:bg-white"
+                  className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[1.1rem] border border-brand-forest/15 bg-white/60 text-brand-forest shadow-[0_10px_26px_rgba(43,27,110,0.07)] transition-all duration-300 hover:-translate-y-[1px] hover:bg-white"
                   onClick={toggleMobileMenu}
                   type="button"
                 >
@@ -474,7 +474,7 @@ export function NavBar() {
                 )}
 
                 <Link
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-brand-clay px-4 py-3 text-center text-sm font-semibold text-white"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-brand-clay px-4 py-3 text-center text-sm font-semibold text-brand-ink"
                   onClick={closeMobileMenu}
                   to={primaryAction.href}
                 >

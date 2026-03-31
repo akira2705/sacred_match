@@ -25,7 +25,7 @@ const footerColumns = {
 
 export function Footer() {
   return (
-    <footer className="mt-24 border-t border-brand-forest/10 bg-brand-ink text-brand-cream">
+    <footer className="mt-24 border-t border-brand-forest/20 bg-brand-ink text-brand-cream">
       <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:px-8">
         <div>
           <span className="eyebrow border-white/10 bg-white/5 text-brand-gold">

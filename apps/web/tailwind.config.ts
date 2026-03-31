@@ -5,25 +5,26 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        display: ["Cormorant Garamond", "Georgia", "serif"],
-        body: ["Manrope", "Segoe UI", "sans-serif"],
-        serif: ["Cormorant Garamond", "Georgia", "serif"],
+        display: ["Playfair Display", "Georgia", "serif"],
+        body: ["Inter", "Segoe UI", "sans-serif"],
+        serif: ["Playfair Display", "Georgia", "serif"],
       },
       colors: {
         brand: {
-          ink: "#081c15",
-          forest: "#1b4332",
-          emerald: "#2d6a4f",
-          moss: "#40916c",
-          sand: "#d8c3a5",
-          clay: "#b56549",
-          gold: "#d4a373",
-          cream: "#f8f3eb",
+          ink: "#1A1035",
+          forest: "#2B1B6E",
+          emerald: "#3D2A8A",
+          moss: "#6B5CE7",
+          sand: "#EAD9B0",
+          clay: "#C9A227",
+          gold: "#E8C96A",
+          cream: "#FAFAF8",
         },
       },
       boxShadow: {
-        halo: "0 20px 80px rgba(27, 67, 50, 0.15)",
-        velvet: "0 18px 44px rgba(8, 28, 21, 0.12)",
+        halo: "0 20px 80px rgba(43, 27, 110, 0.14)",
+        velvet: "0 18px 44px rgba(26, 16, 53, 0.10)",
+        gold: "0 8px 32px rgba(201, 162, 39, 0.32)",
       },
       backgroundImage: {
         "linen-grid":

@@ -1,16 +1,11 @@
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap");
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
   color-scheme: light;
-  font-family: "Manrope", "Segoe UI", sans-serif;
-  background:
-    radial-gradient(circle at top left, rgba(212, 163, 115, 0.18), transparent 35%),
-    radial-gradient(circle at top right, rgba(64, 145, 108, 0.18), transparent 30%),
-    #f8f3eb;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  background: #FAFAF8;
 }
 
 * {
@@ -26,17 +21,14 @@ body {
   min-width: 320px;
   min-height: 100vh;
   overflow-x: hidden;
-  color: #081c15;
-  font-family: "Manrope", "Segoe UI", sans-serif;
-  background:
-    radial-gradient(circle at top left, rgba(212, 163, 115, 0.15), transparent 26%),
-    radial-gradient(circle at 82% 2%, rgba(64, 145, 108, 0.12), transparent 22%),
-    linear-gradient(180deg, #fdf9f3 0%, #f7efe5 100%);
+  color: #1A1035;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  background: #FAFAF8;
 }
 
 ::selection {
-  background: rgba(181, 101, 73, 0.2);
-  color: #081c15;
+  background: rgba(201, 162, 39, 0.22);
+  color: #1A1035;
 }
 
 a {
@@ -81,28 +73,29 @@ h6 {
   min-height: 100vh;
 }
 
+/* ─── Surface card ─────────────────────────────────────────────────────── */
 .surface-card {
-  @apply rounded-[2rem] border border-white/60 bg-white/80 shadow-halo backdrop-blur;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.8));
+  @apply rounded-[2rem] border border-white/70 bg-white/90 shadow-halo backdrop-blur;
+  background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(255,255,255,0.88));
   transition:
     transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 0.35s ease,
-    background-color 0.35s ease;
+    border-color 0.35s ease;
 }
 
 .surface-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 26px 80px rgba(8, 28, 21, 0.13);
-  border-color: rgba(64, 145, 108, 0.22);
+  transform: translateY(-5px);
+  box-shadow: 0 28px 80px rgba(43, 27, 110, 0.13);
+  border-color: rgba(107, 92, 231, 0.18);
 }
 
+/* ─── Eyebrow badge ─────────────────────────────────────────────────────── */
 .eyebrow {
   @apply inline-flex items-center gap-2 rounded-full border border-brand-emerald/20 bg-brand-emerald/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-brand-emerald;
   backdrop-filter: blur(14px);
 }
 
+/* ─── Layout shells ─────────────────────────────────────────────────────── */
 .section-shell {
   @apply mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 lg:px-8;
 }
@@ -111,6 +104,7 @@ h6 {
   @apply grid gap-6 md:grid-cols-2 xl:grid-cols-3;
 }
 
+/* ─── Inputs ─────────────────────────────────────────────────────────────── */
 .input-shell {
   @apply w-full rounded-2xl border border-brand-emerald/15 bg-white px-4 py-3 text-sm text-brand-ink outline-none ring-0;
   transition:
@@ -122,9 +116,10 @@ h6 {
 
 .input-shell:focus {
   @apply border-brand-moss;
-  box-shadow: 0 0 0 4px rgba(64, 145, 108, 0.12);
+  box-shadow: 0 0 0 4px rgba(107, 92, 231, 0.12);
 }
 
+/* ─── Pill chips ─────────────────────────────────────────────────────────── */
 .pill-chip {
   @apply inline-flex items-center gap-2 rounded-full border border-brand-forest/10 bg-brand-forest/5 px-4 py-2 text-sm font-medium text-brand-forest;
   transition:
@@ -135,17 +130,18 @@ h6 {
 
 .pill-chip:hover {
   transform: translateY(-2px);
-  border-color: rgba(64, 145, 108, 0.2);
+  border-color: rgba(107, 92, 231, 0.2);
 }
 
+/* ─── Scroll reveal ──────────────────────────────────────────────────────── */
 .reveal-on-scroll {
   opacity: 0;
   transform: translate3d(0, 34px, 0) scale(0.985);
-  filter: blur(14px);
+  filter: blur(10px);
   transition:
-    opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.85s cubic-bezier(0.22, 1, 0.36, 1),
-    filter 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.9s cubic-bezier(0.22, 1, 0.36, 1);
   transition-delay: var(--reveal-delay, 0ms);
   will-change: transform, opacity, filter;
 }
@@ -156,11 +152,48 @@ h6 {
   filter: blur(0);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
+/* ─── Gold shimmer ──────────────────────────────────────────────────────── */
+@keyframes goldShimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
 
+@keyframes fadeUpSoft {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.982);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.gold-shimmer {
+  background: linear-gradient(
+    90deg,
+    #C9A227 0%,
+    #E8C96A 40%,
+    #C9A227 60%,
+    #E8C96A 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: goldShimmer 4s linear infinite;
+}
+
+/* ─── Reduced motion ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
   *,
   *::before,
   *::after {
