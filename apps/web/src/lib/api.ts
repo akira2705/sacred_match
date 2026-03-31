@@ -1,10 +1,6 @@
-import axios from "axios";
-import {
-  landingPageContent,
-  type FaqItem,
-  type LandingPageContent,
-  type ResourceCard,
-} from "@/content/siteContent";
+﻿const baseURL = import.meta.env.VITE_API_URL;
+
+type RequestMethod = "GET" | "POST";
 
 export type RegistrationIntent = {
   email: string;
@@ -19,6 +15,42 @@ export type LoginPayload = {
   email: string;
   password: string;
 };
+
+export type FaqItem = {
+  question: string;
+  answer: string;
+};
+
+export type ResourceCard = {
+  title: string;
+  excerpt: string;
+  readTime: string;
+  category: string;
+};
+
+export type LandingPageContent = {
+  metrics: string[];
+  features: Array<{
+    id: string;
+    title: string;
+    description: string;
+    cta: string;
+  }>;
+  safetyPillars: string[];
+  ethnicHighlights: string[];
+  testimonials: Array<{
+    names: string;
+    route: string;
+    story: string;
+    timeline: string;
+    tag: string;
+  }>;
+  resources: ResourceCard[];
+  faqs: FaqItem[];
+  connectionSteps: string[];
+};
+
+import { landingPageContent } from "@/content/siteContent";
 
 type OverviewPayload = {
   resources?: Array<{
@@ -42,12 +74,42 @@ type OverviewResponse = {
   data?: OverviewPayload;
 };
 
-const baseURL = import.meta.env.VITE_API_URL;
+async function apiRequest<TResponse>(
+  path: string,
+  options?: {
+    method?: RequestMethod;
+    body?: unknown;
+  },
+): Promise<TResponse> {
+  if (!baseURL) {
+    throw new Error("API URL is not configured");
+  }
 
-const api = axios.create({
-  baseURL,
-  timeout: 5000,
-});
+  const response = await fetch(`${baseURL}${path}`, {
+    method: options?.method ?? "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: options?.body ? JSON.stringify(options.body) : undefined,
+  });
+
+  if (!response.ok) {
+    let message = `Request failed with status ${response.status}`;
+
+    try {
+      const errorPayload = (await response.json()) as { message?: string };
+      if (errorPayload.message) {
+        message = errorPayload.message;
+      }
+    } catch {
+      // Keep the fallback message when the response body is not JSON.
+    }
+
+    throw new Error(message);
+  }
+
+  return (await response.json()) as TResponse;
+}
 
 function mapResources(resources?: OverviewPayload["resources"]): ResourceCard[] {
   return (
@@ -75,16 +137,16 @@ export async function getLandingPageContent(): Promise<LandingPageContent> {
   }
 
   try {
-    const response = await api.get<OverviewResponse>("/public/overview");
+    const response = await apiRequest<OverviewResponse>("/public/overview");
     const ethnicHighlights =
-      response.data.data?.ethnicGroups?.map(
+      response.data?.ethnicGroups?.map(
         (group) => `${group.name} (${group.region}) - ${group.focus}`,
       ) ?? landingPageContent.ethnicHighlights;
 
     return {
       ...landingPageContent,
-      resources: mapResources(response.data.data?.resources),
-      faqs: mapFaqs(response.data.data?.faqs),
+      resources: mapResources(response.data?.resources),
+      faqs: mapFaqs(response.data?.faqs),
       ethnicHighlights,
     };
   } catch {
@@ -100,8 +162,10 @@ export async function submitRegistrationIntent(payload: RegistrationIntent) {
     };
   }
 
-  const response = await api.post<{ message: string }>("/auth/register", payload);
-  return response.data;
+  return apiRequest<{ message: string }>("/auth/register", {
+    method: "POST",
+    body: payload,
+  });
 }
 
 export async function loginUser(payload: LoginPayload) {
@@ -113,13 +177,16 @@ export async function loginUser(payload: LoginPayload) {
     };
   }
 
-  const response = await api.post<{ data?: { token?: string }; message?: string }>(
+  const response = await apiRequest<{ data?: { token?: string }; message?: string }>(
     "/auth/login",
-    payload,
+    {
+      method: "POST",
+      body: payload,
+    },
   );
 
   return {
-    message: response.data.message ?? "Login successful",
-    token: response.data.data?.token ?? "",
+    message: response.message ?? "Login successful",
+    token: response.data?.token ?? "",
   };
 }
