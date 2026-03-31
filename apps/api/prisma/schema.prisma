@@ -1,0 +1,458 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AccountStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  DEACTIVATED
+}
+
+enum CeremonyType {
+  CUSTOMARY
+  CHURCH
+  NIKAH
+  COURT
+  INTERFAITH
+  MULTI_TRADITION
+}
+
+enum ConnectionStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  BLOCKED
+  EXPIRED
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  NON_BINARY
+  OTHER
+}
+
+enum GenotypeCode {
+  AA
+  AS
+  AC
+  SS
+  SC
+  UNKNOWN
+}
+
+enum IntroductionStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  DECLINED
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+enum MatchDecision {
+  LIKE
+  PASS
+  SUPER_LIKE
+}
+
+enum MessageStatus {
+  SENT
+  DELIVERED
+  READ
+  FAILED
+}
+
+enum NotificationFrequency {
+  INSTANT
+  DAILY
+  WEEKLY
+  NONE
+}
+
+enum SafetyReportStatus {
+  OPEN
+  UNDER_REVIEW
+  RESOLVED
+  DISMISSED
+}
+
+enum UserRole {
+  USER
+  MODERATOR
+  ADMIN
+}
+
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+  EXPIRED
+}
+
+enum VerificationType {
+  EMAIL
+  PHONE
+  GOVERNMENT_ID
+  PHOTO
+  GENOTYPE
+}
+
+enum VisibilityLevel {
+  EVERYONE
+  MATCHES_ONLY
+  PRIVATE
+}
+
+model User {
+  id                          String                   @id @default(cuid())
+  email                       String                   @unique
+  phone                       String                   @unique
+  passwordHash                String
+  firstName                   String
+  lastName                    String
+  role                        UserRole                 @default(USER)
+  status                      AccountStatus            @default(PENDING)
+  lastSeenAt                  DateTime?
+  createdAt                   DateTime                 @default(now())
+  updatedAt                   DateTime                 @updatedAt
+  profile                     UserProfile?
+  preferences                 UserPreference?
+  photos                      UserPhoto[]
+  verificationRecords         VerificationRecord[]
+  genotypeInfo                GenotypeInfo?
+  sentConnections             Connection[]             @relation("SentConnections")
+  receivedConnections         Connection[]             @relation("ReceivedConnections")
+  conversationMemberships     ConversationParticipant[]
+  messages                    Message[]
+  initiatedIntroductions      FamilyIntroduction[]     @relation("InitiatedIntroductions")
+  receivedIntroductions       FamilyIntroduction[]     @relation("ReceivedIntroductions")
+  negotiations                BridePriceNegotiation[]
+  blockedUsers                BlockedUser[]            @relation("BlockingUser")
+  blockedByUsers              BlockedUser[]            @relation("BlockedByUser")
+  reportsFiled                SafetyReport[]           @relation("ReportsFiled")
+  reportsAgainst              SafetyReport[]           @relation("ReportsAgainst")
+  notificationSetting         NotificationSetting?
+  auditLogs                   AuditLog[]
+}
+
+model UserProfile {
+  id                      String            @id @default(cuid())
+  userId                  String            @unique
+  user                    User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  birthDate               DateTime?
+  gender                  Gender?
+  bio                     String?
+  occupation              String?
+  employer                String?
+  city                    String?
+  state                   String?
+  country                 String            @default("Nigeria")
+  heightCm                Int?
+  educationLevel          String?
+  denomination            String?
+  maritalIntent           String?
+  familyInvolvementLevel  String?
+  ceremonyPreference      CeremonyType?
+  visibility              VisibilityLevel   @default(EVERYONE)
+  createdAt               DateTime          @default(now())
+  updatedAt               DateTime          @updatedAt
+  ethnicities             UserEthnicity[]
+  religions               UserReligion[]
+}
+
+model UserPreference {
+  id                    String            @id @default(cuid())
+  userId                String            @unique
+  user                  User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  preferredAgeMin       Int?
+  preferredAgeMax       Int?
+  preferredStates       Json?
+  openToAllEthnicGroups Boolean           @default(false)
+  interfaithOk          Boolean           @default(false)
+  minimumEducation      String?
+  desiredCeremonyTypes  Json?
+  genotypeVisibility    VisibilityLevel   @default(MATCHES_ONLY)
+  allowGuestPreview     Boolean           @default(false)
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+}
+
+model EthnicGroup {
+  id               String         @id @default(cuid())
+  name             String         @unique
+  slug             String         @unique
+  region           String
+  summary          String
+  bridePriceLabel  String?
+  ceremonyStyle    String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  memberships      UserEthnicity[]
+  guides           CulturalGuide[]
+}
+
+model Religion {
+  id          String         @id @default(cuid())
+  name        String         @unique
+  slug        String         @unique
+  description String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  followers   UserReligion[]
+}
+
+model UserEthnicity {
+  id            String      @id @default(cuid())
+  profileId     String
+  ethnicGroupId String
+  isPrimary     Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+  profile       UserProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  ethnicGroup   EthnicGroup @relation(fields: [ethnicGroupId], references: [id], onDelete: Cascade)
+
+  @@unique([profileId, ethnicGroupId])
+}
+
+model UserReligion {
+  id         String      @id @default(cuid())
+  profileId  String
+  religionId String
+  isPrimary  Boolean     @default(true)
+  createdAt  DateTime    @default(now())
+  profile    UserProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  religion   Religion    @relation(fields: [religionId], references: [id], onDelete: Cascade)
+
+  @@unique([profileId, religionId])
+}
+
+model UserPhoto {
+  id                 String             @id @default(cuid())
+  userId             String
+  url                String
+  caption            String?
+  isPrimary          Boolean            @default(false)
+  orderIndex         Int                @default(0)
+  verificationStatus VerificationStatus @default(PENDING)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationRecord {
+  id          String             @id @default(cuid())
+  userId      String
+  type        VerificationType
+  status      VerificationStatus @default(PENDING)
+  provider    String?
+  reference   String?
+  metadata    Json?
+  verifiedAt  DateTime?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model GenotypeInfo {
+  id                  String          @id @default(cuid())
+  userId              String          @unique
+  genotype            GenotypeCode    @default(UNKNOWN)
+  visibility          VisibilityLevel @default(MATCHES_ONLY)
+  isVerified          Boolean         @default(false)
+  laboratoryName      String?
+  laboratoryReference String?
+  testedAt            DateTime?
+  notes               String?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Connection {
+  id                String           @id @default(cuid())
+  requesterId       String
+  recipientId       String
+  status            ConnectionStatus @default(PENDING)
+  decision          MatchDecision?
+  compatibilityScore Int?
+  culturalScore     Int?
+  personalScore     Int?
+  genotypeScore     Int?
+  engagementScore   Int?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  requester         User             @relation("SentConnections", fields: [requesterId], references: [id], onDelete: Cascade)
+  recipient         User             @relation("ReceivedConnections", fields: [recipientId], references: [id], onDelete: Cascade)
+  conversation      Conversation?
+
+  @@unique([requesterId, recipientId])
+}
+
+model Conversation {
+  id            String                    @id @default(cuid())
+  connectionId  String?                   @unique
+  createdAt     DateTime                  @default(now())
+  updatedAt     DateTime                  @updatedAt
+  connection    Connection?               @relation(fields: [connectionId], references: [id], onDelete: SetNull)
+  participants  ConversationParticipant[]
+  messages      Message[]
+}
+
+model ConversationParticipant {
+  id             String       @id @default(cuid())
+  conversationId String
+  userId         String
+  joinedAt       DateTime     @default(now())
+  lastReadAt     DateTime?
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, userId])
+}
+
+model Message {
+  id             String        @id @default(cuid())
+  conversationId String
+  senderId       String
+  body           String
+  status         MessageStatus @default(SENT)
+  sentAt         DateTime      @default(now())
+  deliveredAt    DateTime?
+  readAt         DateTime?
+  conversation   Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         User          @relation(fields: [senderId], references: [id], onDelete: Cascade)
+}
+
+model FamilyIntroduction {
+  id              String             @id @default(cuid())
+  initiatedById   String
+  requestedForId  String
+  status          IntroductionStatus @default(DRAFT)
+  templateKey     String
+  letterBody      String
+  proposedDate    DateTime?
+  locationMode    String?
+  locationDetails String?
+  bridePriceGuide Json?
+  contactSnapshot Json?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  initiatedBy     User               @relation("InitiatedIntroductions", fields: [initiatedById], references: [id], onDelete: Cascade)
+  requestedFor    User               @relation("ReceivedIntroductions", fields: [requestedForId], references: [id], onDelete: Cascade)
+  negotiation     BridePriceNegotiation?
+}
+
+model BridePriceNegotiation {
+  id                   String             @id @default(cuid())
+  familyIntroductionId String             @unique
+  negotiatedById       String
+  proposedItems        Json
+  agreedItems          Json?
+  paymentTerms         Json?
+  agreementDocumentUrl String?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  familyIntroduction   FamilyIntroduction @relation(fields: [familyIntroductionId], references: [id], onDelete: Cascade)
+  negotiatedBy         User               @relation(fields: [negotiatedById], references: [id], onDelete: Cascade)
+}
+
+model BlockedUser {
+  id         String   @id @default(cuid())
+  blockerId  String
+  blockedId  String
+  reason     String?
+  createdAt  DateTime @default(now())
+  blocker    User     @relation("BlockingUser", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked    User     @relation("BlockedByUser", fields: [blockedId], references: [id], onDelete: Cascade)
+
+  @@unique([blockerId, blockedId])
+}
+
+model SafetyReport {
+  id             String             @id @default(cuid())
+  reporterId     String
+  reportedUserId String
+  conversationId String?
+  reason         String
+  description    String?
+  evidence       Json?
+  status         SafetyReportStatus @default(OPEN)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  reporter       User               @relation("ReportsFiled", fields: [reporterId], references: [id], onDelete: Cascade)
+  reportedUser   User               @relation("ReportsAgainst", fields: [reportedUserId], references: [id], onDelete: Cascade)
+}
+
+model CulturalGuide {
+  id                  String      @id @default(cuid())
+  ethnicGroupId       String
+  title               String
+  slug                String      @unique
+  overview            String
+  marriageCustoms     Json?
+  traditions          Json?
+  ceremonyHighlights  Json?
+  faq                 Json?
+  featuredVideoUrl    String?
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+  ethnicGroup         EthnicGroup @relation(fields: [ethnicGroupId], references: [id], onDelete: Cascade)
+}
+
+model BlogPost {
+  id             String    @id @default(cuid())
+  title          String
+  slug           String    @unique
+  excerpt        String
+  body           String
+  category       String
+  coverImageUrl  String?
+  readTimeMinutes Int
+  isPublished    Boolean   @default(false)
+  publishedAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model FaqEntry {
+  id          String   @id @default(cuid())
+  question    String   @unique
+  answer      String
+  category    String
+  isFeatured  Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model NotificationSetting {
+  id                        String                @id @default(cuid())
+  userId                    String                @unique
+  emailNewMatches           Boolean               @default(true)
+  emailMessages             Boolean               @default(true)
+  emailIntroductions        Boolean               @default(true)
+  pushEnabled               Boolean               @default(true)
+  smsEnabled                Boolean               @default(false)
+  frequency                 NotificationFrequency @default(INSTANT)
+  createdAt                 DateTime              @default(now())
+  updatedAt                 DateTime              @updatedAt
+  user                      User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  action      String
+  entityType  String
+  entityId    String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}

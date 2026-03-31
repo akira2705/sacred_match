@@ -1,0 +1,116 @@
+.heroBackdrop {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top left, rgba(212, 163, 115, 0.3), transparent 32%),
+    radial-gradient(circle at 80% 20%, rgba(64, 145, 108, 0.22), transparent 28%),
+    linear-gradient(135deg, rgba(8, 28, 21, 0.97), rgba(27, 67, 50, 0.93));
+}
+
+.heroBackdrop::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.95), transparent);
+}
+
+.heroBackdrop::after {
+  content: "";
+  position: absolute;
+  right: -6rem;
+  bottom: -8rem;
+  width: 24rem;
+  height: 24rem;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(212, 163, 115, 0.22), transparent 62%);
+  filter: blur(12px);
+  animation: glowPulse 10s ease-in-out infinite;
+}
+
+.heroBackdrop > div > div:first-child > * {
+  opacity: 0;
+  animation: fadeUpSoft 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.heroBackdrop > div > div:first-child > *:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.heroBackdrop > div > div:first-child > *:nth-child(2) {
+  animation-delay: 0.14s;
+}
+
+.heroBackdrop > div > div:first-child > *:nth-child(3) {
+  animation-delay: 0.24s;
+}
+
+.heroBackdrop > div > div:first-child > *:nth-child(4) {
+  animation-delay: 0.34s;
+}
+
+.heroBackdrop > div > div:first-child > *:nth-child(5) {
+  animation-delay: 0.44s;
+}
+
+.heroBackdrop > div > div:last-child {
+  opacity: 0;
+  animation: fadeUpSoft 1s cubic-bezier(0.22, 1, 0.36, 1) 0.24s forwards;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(2px);
+  opacity: 0.85;
+  animation: floatSoft 12s ease-in-out infinite;
+  will-change: transform;
+}
+
+.storyRail {
+  scrollbar-width: none;
+  scroll-padding-inline: 1rem;
+}
+
+.storyRail::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes fadeUpSoft {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes floatSoft {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(0, -16px, 0);
+  }
+}
+
+@keyframes glowPulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.08);
+  }
+}

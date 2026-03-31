@@ -1,0 +1,96 @@
+const STORAGE_KEY = "sacred-match-onboarding-draft";
+const REMEMBER_KEY = "sacred-match-remembered-login";
+export const defaultOnboardingDraft = {
+    personal: {
+        dateOfBirth: "1995-06-12",
+        gender: "Female",
+        height: "5'7\"",
+        bodyType: "Athletic",
+        state: "Lagos",
+        lga: "Eti-Osa",
+        education: "Masters",
+        occupation: "Product Manager",
+        incomeRange: "?500k - ?1m",
+        bio: "I value clarity, kindness, faith, and serious long-term intent."
+    },
+    ethnicity: {
+        ethnicGroup: "Yoruba",
+        openToAllEthnicities: true
+    },
+    religion: {
+        faith: "Christianity",
+        subgroup: "Pentecostal",
+        practiceLevel: "Practicing",
+        interfaithOk: false
+    },
+    marriage: {
+        marriageTypes: ["Christian Wedding", "Civil Marriage"],
+        timeline: "6-12 months"
+    },
+    photos: [
+        { name: "profile-primary.jpg", status: "Verified" },
+        { name: "weekend-portrait.jpg", status: "Pending review" }
+    ],
+    genotype: {
+        tested: "yes",
+        genotype: "AA",
+        testDate: "2025-10-10",
+        facilityName: "National Hospital Abuja Diagnostics",
+        certificationCode: "SM-4482",
+        certificateName: "genotype-certificate.png",
+        privacy: "Show to serious matches"
+    },
+    verification: {
+        idType: "National ID",
+        idNumber: "12345678901",
+        frontFileName: "national-id-front.png",
+        backFileName: "",
+        status: "Manual review in 24 hours"
+    },
+    completed: false
+};
+function canUseStorage() {
+    return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
+}
+export function loadOnboardingDraft() {
+    if (!canUseStorage()) {
+        return defaultOnboardingDraft;
+    }
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+        return defaultOnboardingDraft;
+    }
+    try {
+        return {
+            ...defaultOnboardingDraft,
+            ...JSON.parse(raw)
+        };
+    }
+    catch {
+        return defaultOnboardingDraft;
+    }
+}
+export function saveOnboardingDraft(draft) {
+    if (!canUseStorage()) {
+        return;
+    }
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+}
+export function rememberLogin(email) {
+    if (!canUseStorage()) {
+        return;
+    }
+    window.localStorage.setItem(REMEMBER_KEY, email);
+}
+export function forgetRememberedLogin() {
+    if (!canUseStorage()) {
+        return;
+    }
+    window.localStorage.removeItem(REMEMBER_KEY);
+}
+export function loadRememberedLogin() {
+    if (!canUseStorage()) {
+        return "";
+    }
+    return window.localStorage.getItem(REMEMBER_KEY) ?? "";
+}

@@ -1,0 +1,50 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: sacred-match-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: sacred_match
+      POSTGRES_USER: sacred_match
+      POSTGRES_PASSWORD: sacred_match
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: sacred-match-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: sacred-match-api
+    depends_on:
+      - db
+      - redis
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgresql://sacred_match:sacred_match@db:5432/sacred_match?schema=public
+      CORS_ORIGIN: http://localhost:3000
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "4000:4000"
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: sacred-match-web
+    depends_on:
+      - api
+    ports:
+      - "3000:80"
+
+volumes:
+  postgres_data:

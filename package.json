@@ -1,0 +1,28 @@
+{
+  "name": "sacred-match-platform",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "packageManager": "npm@10.9.2",
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=10.0.0"
+  },
+  "scripts": {
+    "infra:up": "docker compose up -d db redis",
+    "infra:down": "docker compose down",
+    "dev:web": "npm run dev --workspace @sacred-match/web",
+    "dev:api": "npm run dev --workspace @sacred-match/api",
+    "dev:setup": "npm run infra:up && npm run prisma:generate && npm run prisma:migrate && npm run prisma:seed",
+    "build": "npm run build --workspace @sacred-match/api && npm run build --workspace @sacred-match/web",
+    "build:web": "npm run build --workspace @sacred-match/web",
+    "build:api": "npm run build --workspace @sacred-match/api",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "prisma:generate": "npm run prisma:generate --workspace @sacred-match/api",
+    "prisma:migrate": "npm run prisma:migrate --workspace @sacred-match/api",
+    "prisma:seed": "npm run prisma:seed --workspace @sacred-match/api"
+  }
+}
