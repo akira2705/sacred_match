@@ -1,10 +1,31 @@
-import axios from "axios";
-import { landingPageContent, } from "@/content/siteContent";
 const baseURL = import.meta.env.VITE_API_URL;
-const api = axios.create({
-    baseURL,
-    timeout: 5000,
-});
+import { landingPageContent } from "@/content/siteContent";
+async function apiRequest(path, options) {
+    if (!baseURL) {
+        throw new Error("API URL is not configured");
+    }
+    const response = await fetch(`${baseURL}${path}`, {
+        method: options?.method ?? "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: options?.body ? JSON.stringify(options.body) : undefined,
+    });
+    if (!response.ok) {
+        let message = `Request failed with status ${response.status}`;
+        try {
+            const errorPayload = (await response.json());
+            if (errorPayload.message) {
+                message = errorPayload.message;
+            }
+        }
+        catch {
+            // Keep the fallback message when the response body is not JSON.
+        }
+        throw new Error(message);
+    }
+    return (await response.json());
+}
 function mapResources(resources) {
     return (resources?.map((resource) => ({
         title: resource.title,
@@ -24,12 +45,12 @@ export async function getLandingPageContent() {
         return landingPageContent;
     }
     try {
-        const response = await api.get("/public/overview");
-        const ethnicHighlights = response.data.data?.ethnicGroups?.map((group) => `${group.name} (${group.region}) - ${group.focus}`) ?? landingPageContent.ethnicHighlights;
+        const response = await apiRequest("/public/overview");
+        const ethnicHighlights = response.data?.ethnicGroups?.map((group) => `${group.name} (${group.region}) - ${group.focus}`) ?? landingPageContent.ethnicHighlights;
         return {
             ...landingPageContent,
-            resources: mapResources(response.data.data?.resources),
-            faqs: mapFaqs(response.data.data?.faqs),
+            resources: mapResources(response.data?.resources),
+            faqs: mapFaqs(response.data?.faqs),
             ethnicHighlights,
         };
     }
@@ -43,8 +64,10 @@ export async function submitRegistrationIntent(payload) {
             message: "Signup flow is wired locally. Connect the API URL to persist registrations.",
         };
     }
-    const response = await api.post("/auth/register", payload);
-    return response.data;
+    return apiRequest("/auth/register", {
+        method: "POST",
+        body: payload,
+    });
 }
 export async function loginUser(payload) {
     if (!baseURL) {
@@ -53,9 +76,12 @@ export async function loginUser(payload) {
             token: "local-development-token",
         };
     }
-    const response = await api.post("/auth/login", payload);
+    const response = await apiRequest("/auth/login", {
+        method: "POST",
+        body: payload,
+    });
     return {
-        message: response.data.message ?? "Login successful",
-        token: response.data.data?.token ?? "",
+        message: response.message ?? "Login successful",
+        token: response.data?.token ?? "",
     };
 }

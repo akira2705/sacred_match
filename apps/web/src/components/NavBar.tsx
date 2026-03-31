@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useSyncExternalStore } from "react";
+﻿import { useEffect, useMemo, useRef, useState } from "react";
 import clsx from "clsx";
 import { LogOut, Menu, ShieldCheck, UserCircle2, X } from "lucide-react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
@@ -11,6 +11,17 @@ type NavItem = {
 };
 
 type RouteMode = "public" | "member" | "admin";
+type LayoutMode = "desktop" | "compact" | "mobile";
+
+type NavMeasurements = {
+  container: number;
+  brand: number;
+  desktopNav: number;
+  desktopActions: number;
+  compactBadge: number;
+  compactActions: number;
+  menuOnlyActions: number;
+};
 
 const publicNav: NavItem[] = [
   { label: "Home", href: "/", end: true },
@@ -54,36 +65,11 @@ const memberRoutePrefixes = [
 const desktopLinkClass =
   "relative inline-flex h-11 shrink-0 items-center whitespace-nowrap rounded-full px-4 text-sm font-semibold tracking-tight text-brand-forest/82 transition-all duration-300 ease-out hover:-translate-y-[1px] hover:bg-white hover:text-brand-ink";
 
-function subscribeToViewport(callback: () => void) {
-  if (typeof window === "undefined") {
-    return () => undefined;
-  }
+const measurementClass =
+  "pointer-events-none absolute left-0 top-0 -z-10 opacity-0 [visibility:hidden]";
 
-  window.addEventListener("resize", callback);
-  window.addEventListener("orientationchange", callback);
-
-  return () => {
-    window.removeEventListener("resize", callback);
-    window.removeEventListener("orientationchange", callback);
-  };
-}
-
-function getViewportWidth() {
-  return typeof window === "undefined" ? 1600 : window.innerWidth;
-}
-
-function useNavLayoutMode() {
-  const width = useSyncExternalStore(subscribeToViewport, getViewportWidth, () => 1600);
-
-  if (width < 920) {
-    return { width, mode: "mobile" as const };
-  }
-
-  if (width < 1380) {
-    return { width, mode: "compact" as const };
-  }
-
-  return { width, mode: "desktop" as const };
+function readWidth(element: Element | null) {
+  return element instanceof HTMLElement ? Math.ceil(element.getBoundingClientRect().width) : 0;
 }
 
 function matchesPath(pathname: string, item: NavItem) {
@@ -113,13 +99,32 @@ function currentLabel(pathname: string, items: NavItem[]) {
 export function NavBar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { width, mode } = useNavLayoutMode();
   const mobileMenuOpen = useUiStore((state) => state.mobileMenuOpen);
   const toggleMobileMenu = useUiStore((state) => state.toggleMobileMenu);
   const closeMobileMenu = useUiStore((state) => state.closeMobileMenu);
   const pathname = location.pathname;
   const routeMode = detectRouteMode(pathname);
   const isSignedIn = typeof window !== "undefined" && Boolean(window.localStorage.getItem("sacred-match-token"));
+
+  const rowRef = useRef<HTMLDivElement | null>(null);
+  const brandRef = useRef<HTMLAnchorElement | null>(null);
+  const desktopNavMeasureRef = useRef<HTMLDivElement | null>(null);
+  const desktopActionsMeasureRef = useRef<HTMLDivElement | null>(null);
+  const compactBadgeMeasureRef = useRef<HTMLSpanElement | null>(null);
+  const compactActionsMeasureRef = useRef<HTMLDivElement | null>(null);
+  const menuOnlyActionsMeasureRef = useRef<HTMLDivElement | null>(null);
+
+  const [layoutMode, setLayoutMode] = useState<LayoutMode>("compact");
+  const [showInlineAction, setShowInlineAction] = useState(true);
+  const [measurements, setMeasurements] = useState<NavMeasurements>({
+    container: 0,
+    brand: 0,
+    desktopNav: 0,
+    desktopActions: 0,
+    compactBadge: 0,
+    compactActions: 0,
+    menuOnlyActions: 0,
+  });
 
   const navItems = useMemo(() => {
     if (routeMode === "admin") {
@@ -134,7 +139,6 @@ export function NavBar() {
   }, [routeMode]);
 
   const activeLabel = currentLabel(pathname, navItems);
-  const showCompactAction = width >= 480;
 
   const primaryAction = useMemo(() => {
     if (routeMode === "admin") {
@@ -168,30 +172,133 @@ export function NavBar() {
   }, [closeMobileMenu, pathname]);
 
   useEffect(() => {
-    if (mode === "desktop" && mobileMenuOpen) {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const trackedNodes = [
+      rowRef.current,
+      brandRef.current,
+      desktopNavMeasureRef.current,
+      desktopActionsMeasureRef.current,
+      compactBadgeMeasureRef.current,
+      compactActionsMeasureRef.current,
+      menuOnlyActionsMeasureRef.current,
+    ].filter((node): node is HTMLElement => Boolean(node));
+
+    const measure = () => {
+      const next: NavMeasurements = {
+        container: readWidth(rowRef.current),
+        brand: readWidth(brandRef.current),
+        desktopNav: readWidth(desktopNavMeasureRef.current),
+        desktopActions: readWidth(desktopActionsMeasureRef.current),
+        compactBadge: readWidth(compactBadgeMeasureRef.current),
+        compactActions: readWidth(compactActionsMeasureRef.current),
+        menuOnlyActions: readWidth(menuOnlyActionsMeasureRef.current),
+      };
+
+      setMeasurements((current) => {
+        const changed = Object.keys(next).some((key) => next[key as keyof NavMeasurements] !== current[key as keyof NavMeasurements]);
+        return changed ? next : current;
+      });
+    };
+
+    measure();
+
+    const observer = typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
+    trackedNodes.forEach((node) => observer?.observe(node));
+    window.addEventListener("resize", measure);
+    window.addEventListener("orientationchange", measure);
+
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener("resize", measure);
+      window.removeEventListener("orientationchange", measure);
+    };
+  }, [activeLabel, navItems, primaryAction.label, routeMode, secondaryLink?.label]);
+
+  useEffect(() => {
+    const breathingRoom = 56;
+    const compactBreathingRoom = 40;
+    const mobileBreathingRoom = 24;
+
+    const desktopFits =
+      measurements.container >=
+      measurements.brand + measurements.desktopNav + measurements.desktopActions + breathingRoom;
+    const compactFits =
+      measurements.container >=
+      measurements.brand + measurements.compactBadge + measurements.compactActions + compactBreathingRoom;
+    const mobileActionFits =
+      measurements.container >=
+      measurements.brand + measurements.compactActions + mobileBreathingRoom;
+
+    if (desktopFits) {
+      setLayoutMode("desktop");
+      setShowInlineAction(true);
+      return;
+    }
+
+    if (compactFits) {
+      setLayoutMode("compact");
+      setShowInlineAction(true);
+      return;
+    }
+
+    setLayoutMode("mobile");
+    setShowInlineAction(mobileActionFits);
+  }, [measurements]);
+
+  useEffect(() => {
+    if (layoutMode === "desktop" && mobileMenuOpen) {
       closeMobileMenu();
     }
-  }, [closeMobileMenu, mobileMenuOpen, mode]);
+  }, [closeMobileMenu, layoutMode, mobileMenuOpen]);
+
+  const statusBadge =
+    routeMode === "admin"
+      ? "Admin workspace"
+      : routeMode === "member"
+        ? activeLabel
+        : "Serious connections only";
 
   return (
     <header className="relative z-40 px-3 pt-3 sm:px-4">
       <div className="mx-auto max-w-7xl rounded-[2rem] border border-white/80 bg-brand-cream/82 shadow-velvet backdrop-blur-2xl">
-        <div className="grid grid-cols-[minmax(0,auto)_1fr_auto] items-center gap-3 px-4 py-3 sm:px-6 lg:gap-6 lg:px-8">
-          <Link className="group flex min-w-0 shrink-0 items-center gap-3.5" to="/">
+        <div ref={rowRef} className="grid grid-cols-[minmax(0,auto)_1fr_auto] items-center gap-3 px-4 py-3 sm:px-6 lg:px-8">
+          <Link
+            ref={brandRef}
+            className={clsx(
+              "group flex min-w-0 shrink-0 items-center",
+              layoutMode === "mobile" ? "gap-2.5" : "gap-3.5",
+            )}
+            to="/"
+          >
             <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[1.6rem] bg-brand-forest text-xl font-extrabold text-brand-cream shadow-[0_18px_40px_rgba(27,67,50,0.22)] transition-transform duration-500 group-hover:-rotate-3 group-hover:scale-[1.04]">
               SM
             </div>
             <div className="min-w-0">
-              <p className="truncate font-display text-[clamp(1.55rem,1.9vw,1.95rem)] leading-none tracking-tight text-brand-ink">
+              <p
+                className={clsx(
+                  "truncate font-display leading-none tracking-tight text-brand-ink",
+                  layoutMode === "mobile"
+                    ? "text-[1.35rem] sm:text-[1.45rem]"
+                    : "text-[clamp(1.55rem,1.9vw,1.95rem)]",
+                )}
+              >
                 Sacred Match
               </p>
-              <p className="mt-1 hidden whitespace-nowrap text-[0.72rem] uppercase tracking-[0.28em] text-brand-forest/68 sm:block">
+              <p
+                className={clsx(
+                  "mt-1 whitespace-nowrap text-[0.72rem] uppercase tracking-[0.28em] text-brand-forest/68",
+                  layoutMode === "desktop" ? "hidden sm:block" : "hidden",
+                )}
+              >
                 Marriage-minded connections in Nigeria
               </p>
             </div>
           </Link>
 
-          {mode === "desktop" ? (
+          {layoutMode === "desktop" ? (
             <nav className="min-w-0 items-center justify-center lg:flex">
               <div className="flex min-w-0 max-w-full items-center gap-1.5 rounded-full border border-brand-forest/10 bg-white/70 p-1.5 shadow-[0_14px_34px_rgba(8,28,21,0.06)]">
                 {navItems.map((item) => (
@@ -212,20 +319,18 @@ export function NavBar() {
                 ))}
               </div>
             </nav>
-          ) : (
-            <div className="justify-self-center">
-              <span className="hidden rounded-full border border-brand-forest/10 bg-white/70 px-4 py-2 text-sm font-semibold text-brand-forest sm:inline-flex">
-                {routeMode === "admin"
-                  ? "Admin workspace"
-                  : routeMode === "member"
-                    ? activeLabel
-                    : "Serious connections only"}
+          ) : layoutMode === "compact" ? (
+            <div className="justify-self-center min-w-0 px-3">
+              <span className="inline-flex max-w-[14rem] truncate rounded-full border border-brand-forest/10 bg-white/70 px-4 py-2 text-sm font-semibold text-brand-forest">
+                {statusBadge}
               </span>
             </div>
+          ) : (
+            <div />
           )}
 
           <div className="flex shrink-0 items-center justify-self-end gap-2 sm:gap-3">
-            {mode === "desktop" ? (
+            {layoutMode === "desktop" ? (
               <>
                 {secondaryLink ? (
                   <Link
@@ -256,9 +361,12 @@ export function NavBar() {
               </>
             ) : (
               <>
-                {showCompactAction ? (
+                {showInlineAction ? (
                   <Link
-                    className="inline-flex h-11 shrink-0 items-center whitespace-nowrap rounded-full bg-brand-clay px-4 text-sm font-semibold text-white shadow-[0_14px_30px_rgba(181,101,73,0.24)] transition-all duration-300 hover:-translate-y-[1px] hover:bg-brand-gold"
+                    className={clsx(
+                      "inline-flex h-11 shrink-0 items-center whitespace-nowrap rounded-full bg-brand-clay text-sm font-semibold text-white shadow-[0_14px_30px_rgba(181,101,73,0.24)] transition-all duration-300 hover:-translate-y-[1px] hover:bg-brand-gold",
+                      layoutMode === "mobile" ? "px-3.5" : "px-4",
+                    )}
                     to={primaryAction.href}
                   >
                     {primaryAction.label}
@@ -278,7 +386,54 @@ export function NavBar() {
           </div>
         </div>
 
-        {mobileMenuOpen && mode !== "desktop" ? (
+        <div className={measurementClass} aria-hidden="true">
+          <div className="inline-flex flex-col gap-4 p-4">
+            <div ref={desktopNavMeasureRef} className="flex items-center gap-1.5 rounded-full border border-brand-forest/10 bg-white/70 p-1.5">
+              {navItems.map((item) => (
+                <span key={`measure-desktop-${item.href}`} className={desktopLinkClass}>
+                  {item.label}
+                </span>
+              ))}
+            </div>
+
+            <div ref={desktopActionsMeasureRef} className="flex items-center gap-3">
+              {secondaryLink ? (
+                <span className="inline-flex h-11 shrink-0 items-center whitespace-nowrap rounded-full border border-brand-forest/15 bg-white/55 px-5 text-sm font-semibold text-brand-forest">
+                  {secondaryLink.label}
+                </span>
+              ) : null}
+              <span className="inline-flex h-11 shrink-0 items-center whitespace-nowrap rounded-full bg-brand-clay px-5 text-sm font-semibold text-white">
+                {primaryAction.label}
+              </span>
+              {!secondaryLink ? (
+                <span className="inline-flex h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-brand-forest/15 bg-white/55 px-5 text-sm font-semibold text-brand-forest">
+                  Log Out
+                </span>
+              ) : null}
+            </div>
+
+            <span ref={compactBadgeMeasureRef} className="inline-flex max-w-[14rem] truncate rounded-full border border-brand-forest/10 bg-white/70 px-4 py-2 text-sm font-semibold text-brand-forest">
+              {statusBadge}
+            </span>
+
+            <div ref={compactActionsMeasureRef} className="flex items-center gap-3">
+              <span className="inline-flex h-11 shrink-0 items-center whitespace-nowrap rounded-full bg-brand-clay px-4 text-sm font-semibold text-white">
+                {primaryAction.label}
+              </span>
+              <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[1.1rem] border border-brand-forest/15 bg-white/60 text-brand-forest">
+                <Menu size={18} />
+              </span>
+            </div>
+
+            <div ref={menuOnlyActionsMeasureRef} className="flex items-center gap-3">
+              <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[1.1rem] border border-brand-forest/15 bg-white/60 text-brand-forest">
+                <Menu size={18} />
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {mobileMenuOpen && layoutMode !== "desktop" ? (
           <div className="border-t border-brand-forest/10 bg-brand-cream/90">
             <nav className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-5 sm:px-6">
               {navItems.map((item) => (
