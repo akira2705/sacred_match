@@ -66,7 +66,7 @@ const desktopLinkClass =
   "relative inline-flex h-11 shrink-0 items-center whitespace-nowrap rounded-full px-4 text-sm font-semibold tracking-tight text-brand-forest/75 transition-all duration-300 ease-out hover:-translate-y-[1px] hover:bg-white hover:text-brand-ink";
 
 const measurementClass =
-  "pointer-events-none absolute left-0 top-0 -z-10 opacity-0 [visibility:hidden]";
+  "pointer-events-none absolute left-[-9999px] top-0 -z-50 opacity-0 overflow-hidden";
 
 function readWidth(element: Element | null) {
   return element instanceof HTMLElement ? Math.ceil(element.getBoundingClientRect().width) : 0;
@@ -114,7 +114,11 @@ export function NavBar() {
   const compactActionsMeasureRef = useRef<HTMLDivElement | null>(null);
   const menuOnlyActionsMeasureRef = useRef<HTMLDivElement | null>(null);
 
-  const [layoutMode, setLayoutMode] = useState<LayoutMode>("compact");
+  const [layoutMode, setLayoutMode] = useState<LayoutMode>(() => {
+    if (typeof window !== "undefined" && window.innerWidth >= 1024) return "desktop";
+    if (typeof window !== "undefined" && window.innerWidth >= 640) return "compact";
+    return "mobile";
+  });
   const [showInlineAction, setShowInlineAction] = useState(true);
   const [measurements, setMeasurements] = useState<NavMeasurements>({
     container: 0,
@@ -262,7 +266,7 @@ export function NavBar() {
         : "Serious connections only";
 
   return (
-    <header className="relative z-40 px-3 pt-3 sm:px-4">
+    <header className="relative z-40 px-3 pt-3 sm:px-4" style={{ transition: "none" }}>
       <div className="mx-auto max-w-7xl rounded-[2rem] border border-brand-forest/12 bg-brand-cream/90 shadow-velvet backdrop-blur-2xl">
         <div ref={rowRef} className="grid grid-cols-[minmax(0,auto)_1fr_auto] items-center gap-3 px-4 py-3 sm:px-6 lg:px-8">
           <Link
@@ -287,14 +291,16 @@ export function NavBar() {
               >
                 Sacred Match
               </p>
-              <p
-                className={clsx(
-                  "mt-1 whitespace-nowrap text-[0.72rem] uppercase tracking-[0.28em] text-brand-forest/68",
-                  layoutMode === "desktop" ? "hidden sm:block" : "hidden",
-                )}
-              >
-                Marriage-minded connections in Nigeria
-              </p>
+              {routeMode !== "admin" ? (
+                <p
+                  className={clsx(
+                    "mt-1 whitespace-nowrap text-[0.72rem] uppercase tracking-[0.28em] text-brand-forest/68",
+                    layoutMode === "desktop" ? "hidden sm:block" : "hidden",
+                  )}
+                >
+                  Marriage-minded connections in Nigeria
+                </p>
+              ) : null}
             </div>
           </Link>
 
