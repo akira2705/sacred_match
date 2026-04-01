@@ -78,7 +78,7 @@ function AdminHeader({ title, subtitle }: { title: string; subtitle?: string }) 
       <div className="flex items-center gap-2 rounded-2xl border border-brand-forest/10 bg-white px-4 py-2 shadow-[0_4px_16px_rgba(43,27,110,0.06)]">
         <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
         <span className="text-xs font-semibold text-brand-forest/70">Live</span>
-        <span className="text-xs text-brand-forest/40">March 31, 2026</span>
+        <span className="text-xs text-brand-forest/40">April 1, 2026</span>
       </div>
     </div>
   );
@@ -159,28 +159,40 @@ function StatusBadge({ status }: { status: string }) {
 
 // ─── Admin Dashboard ────────────────────────────────────────────────────────
 
+const FOUNDING_GOAL = 1000;
+const FOUNDING_CURRENT = 327;
+const FOUNDING_PCT = Math.round((FOUNDING_CURRENT / FOUNDING_GOAL) * 100);
+
 const dashboardStats = [
-  { label: "Total Users", value: "12,480", trend: "up" as const, trendLabel: "↑ 12% this month", icon: Users, accent: true },
-  { label: "Active Today", value: "1,184", trend: "up" as const, trendLabel: "↑ 5% vs yesterday", icon: Zap },
-  { label: "Matches Today", value: "342", trend: "up" as const, trendLabel: "↑ 8% vs yesterday", icon: TrendingUp },
-  { label: "Pending Reports", value: "18", trend: "warn" as const, trendLabel: "⚠ Needs review", icon: ShieldAlert },
+  { label: "Total Members", value: "12,480", trend: "up" as const, trendLabel: "↑ 12% this month", icon: Users, accent: true },
+  { label: "Active Today",  value: "1,184",  trend: "up" as const, trendLabel: "↑ 5% vs yesterday", icon: Zap },
+  { label: "Matches Today", value: "342",    trend: "up" as const, trendLabel: "↑ 8% vs yesterday", icon: TrendingUp },
+  { label: "Pending Reports", value: "18",   trend: "warn" as const, trendLabel: "⚠ Needs review", icon: ShieldAlert },
 ];
 
 const recentActivity = [
-  { type: "signup", label: "Chisom Obi joined from Lagos", time: "2 min ago" },
-  { type: "report", label: "New report filed: RPT-1025", time: "14 min ago" },
-  { type: "match", label: "87 new connections made today", time: "1 hr ago" },
-  { type: "verify", label: "Abubakar Sani verified ID", time: "2 hr ago" },
-  { type: "message", label: "Message volume up 12% today", time: "3 hr ago" },
+  { type: "signup",  label: "Chisom Obi joined from Lagos",         time: "2 min ago" },
+  { type: "report",  label: "New report filed: RPT-1025",           time: "14 min ago" },
+  { type: "match",   label: "87 new connections made today",        time: "1 hr ago" },
+  { type: "verify",  label: "Abubakar Sani verified ID",            time: "2 hr ago" },
+  { type: "message", label: "Message volume up 12% today",          time: "3 hr ago" },
+  { type: "signup",  label: "Fatima Bello joined from Abuja",       time: "4 hr ago" },
 ];
 
 const activityIcons: Record<string, React.ElementType> = {
-  signup: UserCheck,
-  report: Flag,
-  match: CheckCircle2,
-  verify: ShieldCheck,
+  signup:  UserCheck,
+  report:  Flag,
+  match:   CheckCircle2,
+  verify:  ShieldCheck,
   message: MessageSquare,
 };
+
+const genotypeStats = [
+  { label: "AA profiles",  value: "6,240",  pct: 50 },
+  { label: "AS profiles",  value: "4,368",  pct: 35 },
+  { label: "SS profiles",  value: "748",    pct: 6  },
+  { label: "Not disclosed",value: "1,124",  pct: 9  },
+];
 
 export function AdminDashboardPage() {
   return (
@@ -194,7 +206,43 @@ export function AdminDashboardPage() {
             subtitle="Platform health, moderation queue, and live activity."
           />
 
-          {/* Stats */}
+          {/* ── Founding Member Banner ───────────────────────────────────── */}
+          <RevealOnScroll>
+            <div className="mb-6 overflow-hidden rounded-[2rem] bg-brand-forest p-6 text-white shadow-[0_12px_48px_rgba(74,47,173,0.28)]">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.22em] text-brand-gold">
+                    Founding Member Drive
+                  </p>
+                  <h2 className="mt-1 font-display text-2xl font-bold text-white">
+                    {FOUNDING_CURRENT.toLocaleString()} / {FOUNDING_GOAL.toLocaleString()} members
+                  </h2>
+                  <p className="mt-1 text-sm text-white/60">
+                    {FOUNDING_GOAL - FOUNDING_CURRENT} spots remaining in the founding cohort
+                  </p>
+                </div>
+                <span className="rounded-2xl border border-brand-gold/30 bg-brand-gold/15 px-5 py-2 text-2xl font-bold text-brand-gold">
+                  {FOUNDING_PCT}%
+                </span>
+              </div>
+              <div className="mt-5 h-3 w-full overflow-hidden rounded-full bg-white/10">
+                <div
+                  className="h-full rounded-full transition-all duration-[1.5s] ease-out"
+                  style={{
+                    width: `${FOUNDING_PCT}%`,
+                    background: "linear-gradient(90deg, #C9A227, #E8C96A)",
+                    boxShadow: "0 0 12px rgba(201,162,39,0.45)",
+                  }}
+                />
+              </div>
+              <div className="mt-3 flex justify-between text-xs text-white/40">
+                <span>0</span>
+                <span>{FOUNDING_GOAL.toLocaleString()} founding members</span>
+              </div>
+            </div>
+          </RevealOnScroll>
+
+          {/* ── Stat Cards ─────────────────────────────────────────────── */}
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {dashboardStats.map((stat, i) => (
               <RevealOnScroll key={stat.label} delay={i * 60}>
@@ -203,62 +251,84 @@ export function AdminDashboardPage() {
             ))}
           </div>
 
-          {/* Body grid */}
-          <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_0.55fr]">
-            {/* Recent reports */}
-            <RevealOnScroll>
-              <div className="rounded-[2rem] border border-brand-forest/10 bg-white p-6 shadow-[0_4px_24px_rgba(43,27,110,0.07)]">
-                <div className="flex items-center justify-between">
-                  <h2 className="font-display text-xl font-semibold text-brand-ink">
-                    Recent Reports
-                  </h2>
-                  <Link
-                    to="/admin/reports"
-                    className="flex items-center gap-1 text-xs font-semibold text-brand-forest/60 transition hover:text-brand-forest"
-                  >
-                    View all <ChevronRight size={13} />
-                  </Link>
-                </div>
+          {/* ── Body grid ──────────────────────────────────────────────── */}
+          <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_0.52fr]">
 
-                <div className="mt-5 grid gap-3">
-                  {adminReports.map((report) => (
-                    <div
-                      key={report.id}
-                      className="flex items-start justify-between gap-4 rounded-2xl border border-brand-forest/8 bg-brand-cream px-4 py-4 transition duration-200 hover:border-brand-moss/20 hover:shadow-[0_4px_16px_rgba(43,27,110,0.08)]"
+            {/* Recent reports */}
+            <div className="flex flex-col gap-6">
+              <RevealOnScroll>
+                <div className="rounded-[2rem] border border-brand-forest/10 bg-white p-6 shadow-[0_4px_24px_rgba(74,47,173,0.07)]">
+                  <div className="flex items-center justify-between">
+                    <h2 className="font-display text-xl font-semibold text-brand-ink">Recent Reports</h2>
+                    <Link
+                      to="/admin/reports"
+                      className="flex items-center gap-1 text-xs font-semibold text-brand-forest/60 transition hover:text-brand-forest"
                     >
-                      <div className="min-w-0 flex-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="text-xs font-bold text-brand-forest/40">{report.id}</span>
-                          <StatusBadge status={report.status} />
+                      View all <ChevronRight size={13} />
+                    </Link>
+                  </div>
+                  <div className="mt-5 grid gap-3">
+                    {adminReports.map((report) => (
+                      <div
+                        key={report.id}
+                        className="flex items-start justify-between gap-4 rounded-2xl border border-brand-forest/8 bg-brand-cream px-4 py-4 transition duration-200 hover:border-brand-moss/20 hover:shadow-[0_4px_16px_rgba(74,47,173,0.08)]"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="text-xs font-bold text-brand-forest/40">{report.id}</span>
+                            <StatusBadge status={report.status} />
+                          </div>
+                          <p className="mt-1.5 truncate text-sm font-semibold text-brand-ink">
+                            {report.reason} · {report.reportedUser}
+                          </p>
+                          <p className="mt-0.5 truncate text-xs text-brand-forest/55">
+                            {report.description}
+                          </p>
                         </div>
-                        <p className="mt-1.5 truncate text-sm font-semibold text-brand-ink">
-                          {report.reason} · {report.reportedUser}
-                        </p>
-                        <p className="mt-0.5 truncate text-xs text-brand-forest/55">
-                          {report.description}
-                        </p>
+                        <span className="shrink-0 text-xs text-brand-forest/40">{report.date}</span>
                       </div>
-                      <span className="shrink-0 text-xs text-brand-forest/40">{report.date}</span>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </RevealOnScroll>
+              </RevealOnScroll>
+
+              {/* Genotype breakdown */}
+              <RevealOnScroll delay={80}>
+                <div className="rounded-[2rem] border border-brand-forest/10 bg-white p-6 shadow-[0_4px_24px_rgba(74,47,173,0.07)]">
+                  <h2 className="font-display text-xl font-semibold text-brand-ink">Genotype Distribution</h2>
+                  <p className="mt-1 text-xs text-brand-forest/50">Among profiles that disclosed</p>
+                  <div className="mt-5 grid gap-3">
+                    {genotypeStats.map((g) => (
+                      <div key={g.label}>
+                        <div className="flex items-center justify-between text-xs font-semibold text-brand-ink/70">
+                          <span>{g.label}</span>
+                          <span>{g.value} <span className="text-brand-forest/40 font-normal">({g.pct}%)</span></span>
+                        </div>
+                        <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-brand-forest/8">
+                          <div
+                            className="h-full rounded-full bg-brand-forest"
+                            style={{ width: `${g.pct}%`, opacity: 0.7 + g.pct / 200 }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </RevealOnScroll>
+            </div>
 
             {/* Right column */}
             <div className="flex flex-col gap-6">
               {/* Quick actions */}
               <RevealOnScroll delay={80}>
-                <div className="rounded-[2rem] border border-brand-forest/10 bg-white p-6 shadow-[0_4px_24px_rgba(43,27,110,0.07)]">
-                  <h2 className="font-display text-xl font-semibold text-brand-ink">
-                    Quick Actions
-                  </h2>
+                <div className="rounded-[2rem] border border-brand-forest/10 bg-white p-6 shadow-[0_4px_24px_rgba(74,47,173,0.07)]">
+                  <h2 className="font-display text-xl font-semibold text-brand-ink">Quick Actions</h2>
                   <div className="mt-4 grid gap-2">
                     {adminNavLinks.slice(1).map(({ href, label, icon: Icon }) => (
                       <Link
                         key={href}
                         to={href}
-                        className="flex items-center gap-3 rounded-2xl border border-brand-forest/8 bg-brand-cream px-4 py-3 text-sm font-semibold text-brand-forest transition duration-200 hover:-translate-y-0.5 hover:border-brand-moss/20 hover:bg-white hover:shadow-[0_4px_16px_rgba(43,27,110,0.08)]"
+                        className="flex items-center gap-3 rounded-2xl border border-brand-forest/8 bg-brand-cream px-4 py-3 text-sm font-semibold text-brand-forest transition duration-200 hover:-translate-y-0.5 hover:border-brand-moss/20 hover:bg-white hover:shadow-[0_4px_16px_rgba(74,47,173,0.08)]"
                       >
                         <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-brand-forest/8">
                           <Icon size={14} className="text-brand-forest" />
@@ -271,12 +341,36 @@ export function AdminDashboardPage() {
                 </div>
               </RevealOnScroll>
 
+              {/* Platform health */}
+              <RevealOnScroll delay={100}>
+                <div className="rounded-[2rem] border border-brand-forest/10 bg-white p-6 shadow-[0_4px_24px_rgba(74,47,173,0.07)]">
+                  <h2 className="font-display text-xl font-semibold text-brand-ink">Platform Health</h2>
+                  <div className="mt-4 grid gap-3">
+                    {[
+                      { label: "Verified profiles",    value: "78%", ok: true  },
+                      { label: "Connection accept rate",value: "64%", ok: true  },
+                      { label: "Avg. response time",   value: "4.2h", ok: true  },
+                      { label: "Report resolution",    value: "91%", ok: true  },
+                      { label: "Spam detection rate",  value: "99%", ok: true  },
+                    ].map((item) => (
+                      <div key={item.label} className="flex items-center justify-between text-sm">
+                        <span className="text-brand-forest/65">{item.label}</span>
+                        <span className={`font-bold ${item.ok ? "text-emerald-600" : "text-rose-600"}`}>
+                          {item.value}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </RevealOnScroll>
+
               {/* Live activity feed */}
-              <RevealOnScroll delay={120}>
-                <div className="rounded-[2rem] border border-brand-forest/10 bg-white p-6 shadow-[0_4px_24px_rgba(43,27,110,0.07)]">
-                  <h2 className="font-display text-xl font-semibold text-brand-ink">
-                    Live Activity
-                  </h2>
+              <RevealOnScroll delay={140}>
+                <div className="rounded-[2rem] border border-brand-forest/10 bg-white p-6 shadow-[0_4px_24px_rgba(74,47,173,0.07)]">
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
+                    <h2 className="font-display text-xl font-semibold text-brand-ink">Live Activity</h2>
+                  </div>
                   <div className="mt-4 grid gap-3">
                     {recentActivity.map((item) => {
                       const Icon = activityIcons[item.type] ?? Activity;
@@ -286,9 +380,7 @@ export function AdminDashboardPage() {
                             <Icon size={13} className="text-brand-forest" />
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="truncate text-xs font-medium text-brand-ink/80">
-                              {item.label}
-                            </p>
+                            <p className="truncate text-xs font-medium text-brand-ink/80">{item.label}</p>
                             <p className="flex items-center gap-1 text-xs text-brand-forest/45">
                               <Clock size={10} />
                               {item.time}

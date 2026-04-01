@@ -1,123 +1,110 @@
-.heroBackdrop {
+/* ─── Mottled purple texture (matches reference) ─────────────────────────── */
+.heroBackdrop,
+.purpleSection {
   position: relative;
   overflow: hidden;
   background:
-    radial-gradient(ellipse at 10% 0%, rgba(107, 92, 231, 0.35), transparent 40%),
-    radial-gradient(ellipse at 90% 100%, rgba(201, 162, 39, 0.15), transparent 40%),
-    linear-gradient(135deg, #1A1035 0%, #2B1B6E 50%, #1e1450 100%);
+    radial-gradient(ellipse at 12% 18%, rgba(255,255,255,0.18) 0%, transparent 22%),
+    radial-gradient(ellipse at 78% 12%, rgba(255,255,255,0.13) 0%, transparent 18%),
+    radial-gradient(ellipse at 88% 68%, rgba(255,255,255,0.11) 0%, transparent 20%),
+    radial-gradient(ellipse at 28% 82%, rgba(255,255,255,0.14) 0%, transparent 18%),
+    radial-gradient(ellipse at 55% 48%, rgba(120,100,240,0.30) 0%, transparent 32%),
+    radial-gradient(ellipse at 5%  55%, rgba(255,255,255,0.09) 0%, transparent 14%),
+    radial-gradient(ellipse at 94% 38%, rgba(201,162,39,0.09) 0%, transparent 14%),
+    radial-gradient(ellipse at 42% 5%,  rgba(255,255,255,0.10) 0%, transparent 16%),
+    radial-gradient(ellipse at 68% 90%, rgba(255,255,255,0.08) 0%, transparent 12%),
+    linear-gradient(140deg, #3B2295 0%, #4A2FAD 25%, #5940C8 50%, #4530B8 72%, #3A228E 100%);
 }
 
-.heroBackdrop::before {
+/* Subtle grid overlay */
+.heroBackdrop::before,
+.purpleSection::before {
   content: "";
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-  background-size: 60px 60px;
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent);
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 56px 56px;
   pointer-events: none;
 }
 
+/* Gold glow bottom-right in hero */
 .heroBackdrop::after {
   content: "";
   position: absolute;
-  right: -4rem;
-  bottom: -6rem;
-  width: 28rem;
-  height: 28rem;
+  right: -5rem;
+  bottom: -7rem;
+  width: 30rem;
+  height: 30rem;
   border-radius: 9999px;
-  background: radial-gradient(circle, rgba(201, 162, 39, 0.18), transparent 65%);
-  filter: blur(16px);
-  animation: glowPulse 8s ease-in-out infinite;
+  background: radial-gradient(circle, rgba(201,162,39,0.16), transparent 65%);
+  filter: blur(18px);
+  animation: glowPulse 9s ease-in-out infinite;
   pointer-events: none;
 }
 
-/* Staggered hero text entrance */
+/* ─── Staggered hero text entrance ─────────────────────────────────────────── */
 .heroBackdrop > div > div:first-child > * {
   opacity: 0;
   animation: fadeUpSoft 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
-
 .heroBackdrop > div > div:first-child > *:nth-child(1) { animation-delay: 0.06s; }
-.heroBackdrop > div > div:first-child > *:nth-child(2) { animation-delay: 0.16s; }
-.heroBackdrop > div > div:first-child > *:nth-child(3) { animation-delay: 0.26s; }
-.heroBackdrop > div > div:first-child > *:nth-child(4) { animation-delay: 0.36s; }
-.heroBackdrop > div > div:first-child > *:nth-child(5) { animation-delay: 0.46s; }
+.heroBackdrop > div > div:first-child > *:nth-child(2) { animation-delay: 0.18s; }
+.heroBackdrop > div > div:first-child > *:nth-child(3) { animation-delay: 0.28s; }
+.heroBackdrop > div > div:first-child > *:nth-child(4) { animation-delay: 0.38s; }
+.heroBackdrop > div > div:first-child > *:nth-child(5) { animation-delay: 0.48s; }
+.heroBackdrop > div > div:first-child > *:nth-child(6) { animation-delay: 0.56s; }
 
 .heroBackdrop > div > div:last-child {
   opacity: 0;
   animation: fadeUpSoft 1s cubic-bezier(0.22, 1, 0.36, 1) 0.22s forwards;
 }
 
-/* Orb elements */
+/* ─── Floating orbs ─────────────────────────────────────────────────────────── */
 .orb {
   position: absolute;
   border-radius: 9999px;
-  filter: blur(3px);
-  opacity: 0.7;
+  filter: blur(2px);
+  opacity: 0.6;
   animation: floatSoft 14s ease-in-out infinite;
   will-change: transform;
   pointer-events: none;
 }
 
-/* Story rail */
+/* ─── Story rail ─────────────────────────────────────────────────────────────── */
 .storyRail {
   scrollbar-width: none;
-  scroll-padding-inline: 1rem;
 }
+.storyRail::-webkit-scrollbar { display: none; }
 
-.storyRail::-webkit-scrollbar {
-  display: none;
-}
-
-/* Purple section (alternating) */
-.purpleSection {
-  position: relative;
-  overflow: hidden;
-  background:
-    radial-gradient(ellipse at 0% 50%, rgba(107, 92, 231, 0.2), transparent 50%),
-    radial-gradient(ellipse at 100% 50%, rgba(201, 162, 39, 0.08), transparent 50%),
-    linear-gradient(135deg, #1A1035 0%, #2B1B6E 100%);
-}
-
-.purpleSection::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 60px 60px;
-  pointer-events: none;
-}
-
-/* Gold accent line */
+/* ─── Gold decorative line ───────────────────────────────────────────────────── */
 .goldLine {
-  width: 3rem;
+  width: 2.5rem;
   height: 2px;
   background: linear-gradient(90deg, transparent, #C9A227, transparent);
   display: inline-block;
+  flex-shrink: 0;
 }
 
-/* Number badge in "How It Works" */
+/* ─── Step number badge ──────────────────────────────────────────────────────── */
 .stepNumber {
-  width: 3rem;
-  height: 3rem;
+  width: 2.75rem;
+  height: 2.75rem;
   border-radius: 9999px;
-  background: linear-gradient(135deg, #2B1B6E, #3D2A8A);
+  background: linear-gradient(135deg, #C9A227 0%, #E8C96A 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: "Playfair Display", Georgia, serif;
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-weight: 700;
-  color: #E8C96A;
-  box-shadow: 0 8px 24px rgba(43, 27, 110, 0.35);
-  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+  color: #1C1240;
+  box-shadow: 0 6px 20px rgba(201, 162, 39, 0.40);
+  flex-shrink: 0;
 }
 
-/* Gold CTA button */
+/* ─── CTA buttons ────────────────────────────────────────────────────────────── */
 .btnGold {
   display: inline-flex;
   align-items: center;
@@ -125,30 +112,25 @@
   gap: 0.5rem;
   background: linear-gradient(135deg, #C9A227 0%, #E8C96A 50%, #C9A227 100%);
   background-size: 200% auto;
-  color: #1A1035;
+  color: #1C1240;
   font-weight: 700;
   font-family: "Inter", sans-serif;
   border-radius: 9999px;
   padding: 1rem 2rem;
   font-size: 0.9375rem;
-  box-shadow: 0 10px 36px rgba(201, 162, 39, 0.36);
+  box-shadow: 0 10px 36px rgba(201, 162, 39, 0.38);
   transition:
     transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.35s ease,
     background-position 0.6s ease;
 }
-
 .btnGold:hover {
   transform: translateY(-3px);
-  box-shadow: 0 18px 48px rgba(201, 162, 39, 0.45);
+  box-shadow: 0 18px 48px rgba(201, 162, 39, 0.48);
   background-position: right center;
 }
+.btnGold:active { transform: translateY(-1px); }
 
-.btnGold:active {
-  transform: translateY(-1px);
-}
-
-/* White outline button */
 .btnOutline {
   display: inline-flex;
   align-items: center;
@@ -158,7 +140,7 @@
   font-weight: 600;
   font-family: "Inter", sans-serif;
   border-radius: 9999px;
-  border: 2px solid rgba(255, 255, 255, 0.35);
+  border: 2px solid rgba(255,255,255,0.35);
   padding: 0.9375rem 2rem;
   font-size: 0.9375rem;
   transition:
@@ -166,14 +148,23 @@
     background-color 0.3s ease,
     border-color 0.3s ease;
 }
-
 .btnOutline:hover {
   transform: translateY(-3px);
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.55);
+  background-color: rgba(255,255,255,0.10);
+  border-color: rgba(255,255,255,0.55);
 }
 
-/* Keyframes */
+/* ─── DNA / Genotype section ─────────────────────────────────────────────────── */
+.dnaSection {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 0% 50%, rgba(74,47,173,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 100% 50%, rgba(201,162,39,0.05) 0%, transparent 50%),
+    #F4F0FC;
+}
+
+/* ─── Keyframes ──────────────────────────────────────────────────────────────── */
 @keyframes fadeUpSoft {
   from {
     opacity: 0;
@@ -189,20 +180,20 @@
 
 @keyframes floatSoft {
   0%, 100% { transform: translate3d(0, 0, 0); }
-  50% { transform: translate3d(0, -18px, 0); }
+  50%       { transform: translate3d(0, -18px, 0); }
 }
 
 @keyframes glowPulse {
   0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 0.75; transform: scale(1.1); }
-}
-
-@keyframes shimmerGold {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
+  50%       { opacity: 0.75; transform: scale(1.1); }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.96); }
-  to { opacity: 1; transform: scale(1); }
+  from { opacity: 0; transform: scale(0.96) translateY(12px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes progressFill {
+  from { width: 0%; }
+  to   { width: 32.7%; }
 }

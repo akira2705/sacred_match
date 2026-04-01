@@ -163,6 +163,29 @@ export function LoginPage() {
       return;
     }
 
+    const isAdminLogin = values.email === adminCredentials.email && values.password === adminCredentials.password;
+    const isDemoLogin = values.email === demoCredentials.email && values.password === demoCredentials.password;
+
+    function applyOfflineLogin(asAdmin: boolean) {
+      clearThrottleState();
+      setLockedUntilState(0);
+      if (values.rememberMe) {
+        rememberLogin(values.email);
+      } else {
+        forgetRememberedLogin();
+      }
+      window.localStorage.setItem(
+        "sacred-match-token",
+        asAdmin ? "admin-development-token" : "local-development-token",
+      );
+      if (asAdmin) {
+        window.localStorage.setItem("sacred-match-role", "admin");
+      } else {
+        window.localStorage.removeItem("sacred-match-role");
+      }
+      navigate(asAdmin ? "/admin" : redirectTo);
+    }
+
     try {
       const response = await loginUser({ email: values.email, password: values.password });
 
@@ -175,22 +198,26 @@ export function LoginPage() {
         forgetRememberedLogin();
       }
 
-      const isAdmin = values.email === adminCredentials.email && values.password === adminCredentials.password;
       window.localStorage.setItem(
         "sacred-match-token",
-        response.token || (isAdmin ? "admin-development-token" : "local-development-token"),
+        response.token || (isAdminLogin ? "admin-development-token" : "local-development-token"),
       );
-      if (isAdmin) {
+      if (isAdminLogin) {
         window.localStorage.setItem("sacred-match-role", "admin");
       } else {
         window.localStorage.removeItem("sacred-match-role");
       }
       setMessage(response.message);
-      navigate(isAdmin ? "/admin" : redirectTo);
+      navigate(isAdminLogin ? "/admin" : redirectTo);
     } catch (error) {
       const normalizedError = normalizeLoginError(error);
 
       if (isNetworkFailure(error)) {
+        // API unreachable (Vercel/no backend) — allow offline login for demo & admin accounts
+        if (isAdminLogin || isDemoLogin) {
+          applyOfflineLogin(isAdminLogin);
+          return;
+        }
         setErrorMessage(normalizedError);
         return;
       }
