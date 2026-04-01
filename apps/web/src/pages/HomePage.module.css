@@ -1,41 +1,21 @@
-/* ─── Canvas purple — exact match to reference image ────────────────────────
-   Deep blue-violet corners (vignette), large soft lavender bloom in the
-   upper-centre, secondary glow lower-right. No white splashes — lighter
-   areas are just lighter purple, matching the watercolour/canvas feel.
-──────────────────────────────────────────────────────────────────────────── */
+/* ─── Exact purple texture image ─────────────────────────────────────────── */
 .heroBackdrop,
 .purpleSection {
   position: relative;
   overflow: hidden;
-  background:
-    /* ── Vignette: darken all four corners ── */
-    radial-gradient(ellipse at   0%   0%, rgba(12,  6, 30,0.80) 0%, transparent 48%),
-    radial-gradient(ellipse at 100%   0%, rgba(12,  6, 30,0.65) 0%, transparent 44%),
-    radial-gradient(ellipse at   0% 100%, rgba( 8,  4, 22,0.88) 0%, transparent 50%),
-    radial-gradient(ellipse at 100% 100%, rgba( 8,  4, 22,0.80) 0%, transparent 48%),
-    /* ── Vignette: darken left & right edges ── */
-    radial-gradient(ellipse at   0%  50%, rgba(10,  5, 28,0.45) 0%, transparent 30%),
-    radial-gradient(ellipse at 100%  50%, rgba(10,  5, 28,0.40) 0%, transparent 28%),
-    /* ── Signature centre-upper bloom (lavender highlight) ── */
-    radial-gradient(ellipse at 45%  36%, rgba(165,130,225,0.52) 0%, rgba(130,95,205,0.22) 38%, transparent 62%),
-    /* ── Secondary softer glow (lower-right) ── */
-    radial-gradient(ellipse at 72%  72%, rgba(120, 88,195,0.28) 0%, transparent 36%),
-    /* ── Faint upper-right warmth ── */
-    radial-gradient(ellipse at 82%  18%, rgba(140,105,210,0.20) 0%, transparent 28%),
-    /* ── Base gradient ── */
-    linear-gradient(160deg, #160D3E 0%, #2B1870 22%, #4A32A0 48%, #2E1C78 74%, #140C38 100%);
+  background-image: url('/purple-bg.png');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
 }
 
-/* Subtle grid overlay */
+/* Very subtle dark overlay so text stays legible over the texture */
 .heroBackdrop::before,
 .purpleSection::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-  background-size: 56px 56px;
+  background: rgba(10, 4, 28, 0.18);
   pointer-events: none;
 }
 
