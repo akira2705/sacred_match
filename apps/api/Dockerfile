@@ -24,4 +24,5 @@ COPY --from=builder /app/apps/api/prisma /app/apps/api/prisma
 
 EXPOSE 4000
 
-CMD ["node", "apps/api/dist/index.js"]
+# Push schema to DB then start the server
+CMD ["sh", "-c", "npx prisma db push --schema apps/api/prisma/schema.prisma --skip-generate && node apps/api/dist/index.js"]

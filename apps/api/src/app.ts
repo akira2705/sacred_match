@@ -9,10 +9,17 @@ import { errorHandler, notFoundHandler } from "./middleware/error-handler";
 export function createApp() {
   const app = express();
 
+  const allowedOrigins = env.CORS_ORIGIN.split(",").map((o) => o.trim());
   app.use(
     cors({
-      origin: env.CORS_ORIGIN,
-      credentials: true
+      origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error(`CORS: ${origin} not allowed`));
+        }
+      },
+      credentials: true,
     })
   );
   app.use(helmet());
