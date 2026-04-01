@@ -11,10 +11,10 @@ const config: Config = {
       },
       colors: {
         brand: {
-          ink: "#1C1240",
-          forest: "#4A2FAD",
-          emerald: "#5840C5",
-          moss: "#7B6BE0",
+          ink: "#160D3E",
+          forest: "#3D2888",
+          emerald: "#5038A0",
+          moss: "#7B5AB8",
           sand: "#EAD9B0",
           clay: "#C9A227",
           gold: "#E8C96A",
