@@ -33,6 +33,12 @@ import { HelpPage, MessagesPage, ProfilePage, SafetyPage, SettingsPage } from "@
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { OnboardingPage } from "@/pages/OnboardingPage";
 import { SignupPage } from "@/pages/SignupPage";
+import {
+  DocumentVaultPage,
+  IntentWallPage,
+  LivenessCheckPage,
+  ReviewPage,
+} from "@/pages/VerificationPages";
 
 function RouteEffects() {
   const location = useLocation();
@@ -118,6 +124,10 @@ export const router = createBrowserRouter([
       { path: "forgot-password", element: <ForgotPasswordPage /> },
       { path: "reset-password", element: <ResetPasswordPage /> },
       { path: "onboarding", element: <OnboardingPage /> },
+      { path: "onboarding/intent", element: <IntentWallPage /> },
+      { path: "onboarding/documents", element: <DocumentVaultPage /> },
+      { path: "onboarding/liveness", element: <LivenessCheckPage /> },
+      { path: "onboarding/review", element: <ReviewPage /> },
       { path: "dashboard", element: <RequireAuth><DashboardPage /></RequireAuth> },
       { path: "matches", element: <RequireAuth><MatchesPage /></RequireAuth> },
       { path: "matches/:id", element: <RequireAuth><MatchProfilePage /></RequireAuth> },

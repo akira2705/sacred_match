@@ -17,6 +17,7 @@ import { HelpPage, MessagesPage, ProfilePage, SafetyPage, SettingsPage } from "@
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { OnboardingPage } from "@/pages/OnboardingPage";
 import { SignupPage } from "@/pages/SignupPage";
+import { DocumentVaultPage, IntentWallPage, LivenessCheckPage, ReviewPage, } from "@/pages/VerificationPages";
 function RouteEffects() {
     const location = useLocation();
     useEffect(() => {
@@ -79,6 +80,10 @@ export const router = createBrowserRouter([
             { path: "forgot-password", element: _jsx(ForgotPasswordPage, {}) },
             { path: "reset-password", element: _jsx(ResetPasswordPage, {}) },
             { path: "onboarding", element: _jsx(OnboardingPage, {}) },
+            { path: "onboarding/intent", element: _jsx(IntentWallPage, {}) },
+            { path: "onboarding/documents", element: _jsx(DocumentVaultPage, {}) },
+            { path: "onboarding/liveness", element: _jsx(LivenessCheckPage, {}) },
+            { path: "onboarding/review", element: _jsx(ReviewPage, {}) },
             { path: "dashboard", element: _jsx(RequireAuth, { children: _jsx(DashboardPage, {}) }) },
             { path: "matches", element: _jsx(RequireAuth, { children: _jsx(MatchesPage, {}) }) },
             { path: "matches/:id", element: _jsx(RequireAuth, { children: _jsx(MatchProfilePage, {}) }) },

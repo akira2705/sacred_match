@@ -129,8 +129,7 @@ export function OnboardingPage({ mode = "create" }: OnboardingPageProps) {
   }
 
   function finish() {
-    window.localStorage.setItem("sacred-match-token", "demo-onboarding-token");
-    navigate("/dashboard");
+    navigate("/onboarding/intent");
   }
 
   return (
@@ -323,7 +322,7 @@ export function OnboardingPage({ mode = "create" }: OnboardingPageProps) {
                   <div className="mt-4 h-3 rounded-full bg-brand-forest/10"><div className="h-3 rounded-full bg-brand-clay" style={{ width: `${strength}%` }} /></div>
                 </div>
                 <div className="flex flex-wrap gap-3">
-                  <button className="rounded-full bg-brand-forest px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-emerald" onClick={finish} type="button">Start Browsing Matches</button>
+                  <button className="rounded-full bg-brand-clay px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-gold" onClick={finish} type="button">Continue to Verification</button>
                   <button className="rounded-full border border-brand-forest/15 px-6 py-3 text-sm font-semibold text-brand-forest" onClick={() => setStep(0)} type="button">Edit Profile</button>
                   <button className="rounded-full border border-brand-forest/15 px-6 py-3 text-sm font-semibold text-brand-forest" onClick={() => navigate("/profile")} type="button">View My Profile</button>
                 </div>

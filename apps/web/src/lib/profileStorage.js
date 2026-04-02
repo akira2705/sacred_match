@@ -1,3 +1,30 @@
+const VERIFICATION_KEY = "sacred-match-verification";
+export const defaultVerificationFlow = {
+    intentAnswers: { reason: "", timeline: "", commitment: "", passed: null },
+    documents: { idType: "", idFrontFile: "", idBackFile: "", photoFile: "" },
+    liveness: { selfieFile: "", videoFile: "", completed: false },
+    readinessAnswers: [],
+    reviewStatus: "pending",
+    currentStage: 0,
+};
+export function loadVerificationFlow() {
+    if (!canUseStorage())
+        return defaultVerificationFlow;
+    const raw = window.localStorage.getItem(VERIFICATION_KEY);
+    if (!raw)
+        return defaultVerificationFlow;
+    try {
+        return { ...defaultVerificationFlow, ...JSON.parse(raw) };
+    }
+    catch {
+        return defaultVerificationFlow;
+    }
+}
+export function saveVerificationFlow(flow) {
+    if (!canUseStorage())
+        return;
+    window.localStorage.setItem(VERIFICATION_KEY, JSON.stringify(flow));
+}
 const STORAGE_KEY = "sacred-match-onboarding-draft";
 const REMEMBER_KEY = "sacred-match-remembered-login";
 export const defaultOnboardingDraft = {

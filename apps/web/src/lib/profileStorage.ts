@@ -1,3 +1,64 @@
+export type IntentAnswers = {
+  reason: string;
+  timeline: string;
+  commitment: string;
+  passed: boolean | null;
+};
+
+export type DocumentVault = {
+  idType: string;
+  idFrontFile: string;
+  idBackFile: string;
+  photoFile: string;
+};
+
+export type LivenessData = {
+  selfieFile: string;
+  videoFile: string;
+  completed: boolean;
+};
+
+export type ReadinessAnswer = {
+  questionId: number;
+  answer: string;
+};
+
+export type VerificationFlow = {
+  intentAnswers: IntentAnswers;
+  documents: DocumentVault;
+  liveness: LivenessData;
+  readinessAnswers: ReadinessAnswer[];
+  reviewStatus: "pending" | "in_review" | "approved" | "rejected";
+  currentStage: number;
+};
+
+const VERIFICATION_KEY = "sacred-match-verification";
+
+export const defaultVerificationFlow: VerificationFlow = {
+  intentAnswers: { reason: "", timeline: "", commitment: "", passed: null },
+  documents: { idType: "", idFrontFile: "", idBackFile: "", photoFile: "" },
+  liveness: { selfieFile: "", videoFile: "", completed: false },
+  readinessAnswers: [],
+  reviewStatus: "pending",
+  currentStage: 0,
+};
+
+export function loadVerificationFlow(): VerificationFlow {
+  if (!canUseStorage()) return defaultVerificationFlow;
+  const raw = window.localStorage.getItem(VERIFICATION_KEY);
+  if (!raw) return defaultVerificationFlow;
+  try {
+    return { ...defaultVerificationFlow, ...JSON.parse(raw) } as VerificationFlow;
+  } catch {
+    return defaultVerificationFlow;
+  }
+}
+
+export function saveVerificationFlow(flow: VerificationFlow) {
+  if (!canUseStorage()) return;
+  window.localStorage.setItem(VERIFICATION_KEY, JSON.stringify(flow));
+}
+
 export type OnboardingDraft = {
   personal: {
     dateOfBirth: string;
