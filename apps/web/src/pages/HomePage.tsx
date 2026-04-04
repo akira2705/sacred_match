@@ -160,13 +160,13 @@ export function HomePage() {
           </div>
 
           {/* Right: hero image */}
-          <div className="relative z-10 hidden lg:block">
+          <div className="relative z-10 hidden lg:flex lg:items-end lg:justify-center">
             <div
               style={{ animation: "fadeIn 1.1s cubic-bezier(0.22,1,0.36,1) 0.3s both" }}
             >
               <img
                 alt={weddingImages[0].alt}
-                className="h-[620px] w-full object-contain drop-shadow-2xl transition duration-700 hover:scale-[1.03]"
+                className="h-[750px] w-auto max-w-none object-contain drop-shadow-2xl transition duration-700 hover:scale-[1.03]"
                 decoding="async"
                 src={weddingImages[0].src}
               />
