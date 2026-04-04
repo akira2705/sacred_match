@@ -1,7 +1,7 @@
 export const weddingImages = [
   {
-    src: "/1-removebg-preview.png",
-    alt: "Happy Nigerian couple on their wedding day holding a marriage certificate",
+    src: "/hero-couple.png",
+    alt: "Elegant Nigerian bride and groom on their wedding day",
     caption: "Your success story starts here",
   },
   {
