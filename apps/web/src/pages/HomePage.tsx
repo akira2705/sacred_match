@@ -166,8 +166,7 @@ export function HomePage() {
             >
               <img
                 alt={weddingImages[0].alt}
-                className="h-[620px] w-full object-contain transition duration-700 hover:scale-[1.03]"
-                style={{ mixBlendMode: "multiply" }}
+                className="h-[620px] w-full object-contain drop-shadow-2xl transition duration-700 hover:scale-[1.03]"
                 decoding="async"
                 src={weddingImages[0].src}
               />
