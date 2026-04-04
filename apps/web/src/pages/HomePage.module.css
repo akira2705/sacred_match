@@ -70,11 +70,24 @@
 
 /* ─── Gold decorative line ───────────────────────────────────────────────────── */
 .goldLine {
-  width: 2.5rem;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #C9A227, transparent);
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   flex-shrink: 0;
+}
+.goldLine::before {
+  content: "★";
+  color: #C9A227;
+  font-size: 0.6rem;
+  line-height: 1;
+  text-shadow: 0 0 8px rgba(201, 162, 39, 0.9);
+}
+.goldLine::after {
+  content: "";
+  display: block;
+  width: 5.5rem;
+  height: 2px;
+  background: linear-gradient(90deg, #C9A227 0%, rgba(201, 162, 39, 0.2) 100%);
 }
 
 /* ─── Step number badge ──────────────────────────────────────────────────────── */
