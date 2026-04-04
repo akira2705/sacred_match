@@ -1,4 +1,4 @@
-import { CheckCircle2, Dna, Flame, Heart, Shield, ShieldCheck, Sparkles, Star, Users } from "lucide-react";
+import { CheckCircle2, Clock, Dna, Flame, Heart, HeartCrack, MessageCircleX, Shield, ShieldCheck, ShieldX, Sparkles, Star, TrendingDown, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { RevealOnScroll } from "@/components/RevealOnScroll";
 import { weddingImages } from "@/content/visuals";
@@ -7,12 +7,12 @@ import styles from "./HomePage.module.css";
 /* ─── Static data ─────────────────────────────────────────────────────────── */
 
 const problemPoints = [
-  "Wasting time on people who aren't serious",
-  "Emotional burn out",
-  "Conversations that go nowhere",
-  "Unserious intentions",
-  "Values & commitment gap",
-  "Serious connections that fade",
+  { label: "Wasting time on people who aren't serious", icon: Clock },
+  { label: "Emotional burn out", icon: HeartCrack },
+  { label: "Conversations that go nowhere", icon: MessageCircleX },
+  { label: "Unserious intentions", icon: ShieldX },
+  { label: "Values & commitment gap", icon: TrendingDown },
+  { label: "Serious connections that fade", icon: Heart },
 ];
 
 const howItWorksSteps = [
@@ -214,11 +214,13 @@ export function HomePage() {
           </RevealOnScroll>
 
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {problemPoints.map((point, i) => (
-              <RevealOnScroll key={point} delay={i * 70}>
-                <div className="flex items-center gap-3 rounded-2xl border border-brand-forest/8 bg-brand-cream px-5 py-4 transition duration-300 hover:-translate-y-1 hover:shadow-[0_8px_28px_rgba(74,47,173,0.09)]">
-                  <CheckCircle2 size={17} className="shrink-0 text-brand-clay" />
-                  <span className="text-sm font-medium text-brand-ink/80">{point}</span>
+            {problemPoints.map(({ label, icon: Icon }, i) => (
+              <RevealOnScroll key={label} delay={i * 70}>
+                <div className="flex items-center gap-4 rounded-2xl border border-brand-forest/8 bg-brand-cream px-5 py-4 transition duration-300 hover:-translate-y-1 hover:shadow-[0_8px_28px_rgba(74,47,173,0.09)]">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-forest/8">
+                    <Icon size={18} className="text-brand-forest" />
+                  </div>
+                  <span className="text-sm font-medium text-brand-ink/80">{label}</span>
                 </div>
               </RevealOnScroll>
             ))}
