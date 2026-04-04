@@ -31,6 +31,7 @@ import { HowItWorksPage } from "@/pages/HowItWorksPage";
 import { LoginPage } from "@/pages/LoginPage";
 import { HelpPage, MessagesPage, ProfilePage, SafetyPage, SettingsPage } from "@/pages/MemberPages";
 import { NotFoundPage } from "@/pages/NotFoundPage";
+import { IntakePage } from "@/pages/IntakePage";
 import { OnboardingPage } from "@/pages/OnboardingPage";
 import { SignupPage } from "@/pages/SignupPage";
 import {
@@ -118,6 +119,7 @@ export const router = createBrowserRouter([
       { path: "terms", element: <LegalPage eyebrow="Terms of service" title="Rules for using the platform responsibly" description="These terms focus on serious relationship use, safety, trust, and respectful conduct." sections={termsSections} /> },
       { path: "data-protection", element: <LegalPage eyebrow="Data protection" title="Data handling principles for a trust-sensitive product" description="A summary of the privacy and operational standards expected from the platform." sections={dataProtectionSections} /> },
       { path: "cookies", element: <LegalPage eyebrow="Cookie policy" title="How session and preference storage works" description="A simple explanation of how storage supports authentication and experience continuity." sections={cookieSections} /> },
+      { path: "start", element: <IntakePage /> },
       { path: "signup", element: <SignupPage /> },
       { path: "login", element: <LoginPage /> },
       { path: "verify-otp", element: <VerifyOtpPage /> },

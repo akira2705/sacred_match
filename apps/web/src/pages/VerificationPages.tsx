@@ -77,39 +77,30 @@ function VerificationProgress({ current }: { current: number }) {
 const intentQuestions = [
   {
     id: "reason",
-    question: "What is your primary reason for joining Sacred Match?",
+    question: "Are you seeking a casual relationship or a life partner for marriage?",
     options: [
-      { label: "I'm ready to find a life partner for marriage", pass: true },
-      { label: "Exploring serious relationships that lead to marriage", pass: true },
-      { label: "Just looking around / curious", pass: false },
-      { label: "Looking for casual dating", pass: false },
+      { label: "A life partner for marriage", pass: true },
+      { label: "A casual relationship", pass: false },
+      { label: "Not sure yet", pass: false },
+      { label: "Just exploring", pass: false },
     ],
   },
   {
-    id: "timeline",
-    question: "How soon are you hoping to get married?",
+    id: "verification",
+    question: "Are you willing to undergo government ID verification to protect this community?",
+    subtext: "Please note that your data is encrypted and handled with strict confidentiality.",
     options: [
-      { label: "Within the next 6 months", pass: true },
-      { label: "Within the next 1-2 years", pass: true },
-      { label: "Not sure, maybe someday", pass: false },
-      { label: "I'm not thinking about marriage right now", pass: false },
+      { label: "Yes, I understand and agree", pass: true },
+      { label: "No, I'd rather skip that", pass: false },
     ],
   },
   {
-    id: "commitment",
-    question:
-      "Are you willing to verify your identity and complete a readiness questionnaire?",
+    id: "sincerity",
+    question: "Do you agree to our Code of Sincerity?",
+    subtext: "No harassment. No ghosting. No fishing. Sacred Match is a space of radical honesty and respect.",
     options: [
-      {
-        label: "Yes, I understand this builds trust for everyone",
-        pass: true,
-      },
-      {
-        label: "Yes, if it means better quality matches",
-        pass: true,
-      },
-      { label: "I'd rather skip verification", pass: false },
-      { label: "No, that feels like too much", pass: false },
+      { label: "Yes, I agree to the Code of Sincerity", pass: true },
+      { label: "No, I don't agree", pass: false },
     ],
   },
 ];
@@ -177,12 +168,12 @@ export function IntentWallPage() {
                 <AlertTriangle className="text-amber-600" size={28} />
               </div>
               <h3 className="font-display text-2xl font-semibold text-brand-ink">
-                We appreciate your honesty
+                We're sorry
               </h3>
               <p className="mx-auto mt-4 max-w-lg text-brand-forest/70 leading-7">
-                Based on your responses, it seems you may not be ready for the
-                marriage-focused experience Sacred Match offers. You're welcome
-                to come back anytime your intentions change.
+                Sacred Match is exclusively for people with genuine marital intent.
+                If your situation changes, you're welcome to return and start your
+                journey with us.
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <Link
@@ -273,6 +264,9 @@ export function IntentWallPage() {
             <h3 className="mt-4 font-display text-xl font-semibold text-brand-ink sm:text-2xl">
               {q.question}
             </h3>
+            {"subtext" in q && q.subtext && (
+              <p className="mt-3 text-sm leading-6 text-brand-forest/70">{q.subtext}</p>
+            )}
             <div className="mt-6 grid gap-3">
               {q.options.map((opt) => (
                 <button
@@ -380,7 +374,7 @@ export function DocumentVaultPage() {
     navigate("/onboarding/liveness");
   }
 
-  const isValid = idType && frontFile && photoFile;
+  const isValid = idType && frontFile;
 
   return (
     <div>
@@ -403,11 +397,9 @@ export function DocumentVaultPage() {
             <div className="mb-8 flex items-start gap-3 rounded-[1.5rem] border border-brand-forest/10 bg-brand-forest/5 px-5 py-4">
               <Lock className="mt-0.5 shrink-0 text-brand-forest" size={18} />
               <div className="text-sm leading-6 text-brand-forest/80">
-                <span className="font-semibold text-brand-ink">
-                  Bank-grade security.
-                </span>{" "}
-                All documents are encrypted at rest and in transit. Our
-                verification team follows strict data handling protocols.
+                <span className="font-semibold text-brand-ink">Your data is encrypted.</span>{" "}
+                We do not store your ID number. We only verify that the name and face on your
+                document match your profile. All uploads are handled with bank-grade security.
               </div>
             </div>
 
@@ -423,9 +415,10 @@ export function DocumentVaultPage() {
                   onChange={(e) => setIdType(e.target.value)}
                 >
                   <option value="">Select your ID type...</option>
-                  {idTypes.map((t) => (
-                    <option key={t}>{t}</option>
-                  ))}
+                  <option>NIN Slip</option>
+                  <option>International Passport</option>
+                  <option>Voter's Card</option>
+                  <option>Driver's License</option>
                 </select>
               </label>
 
@@ -564,9 +557,10 @@ export function DocumentVaultPage() {
               {/* Passport photo */}
               <div className="grid gap-2">
                 <span className="text-sm font-semibold text-brand-forest">
-                  Passport-style photo{" "}
-                  <span className="text-rose-500">*</span>
+                  Profile photo{" "}
+                  <span className="text-brand-forest/50">(optional, but strongly recommended)</span>
                 </span>
+                <p className="text-xs text-brand-forest/60">No inappropriate photos. Clear face, no filters.</p>
                 <div
                   className={`relative rounded-[2rem] border-2 border-dashed p-8 text-center transition ${
                     dragOver === "photo"
@@ -747,16 +741,16 @@ export function LivenessCheckPage() {
                       <span className="text-brand-forest/50">(optional)</span>
                     </p>
                     <p className="mt-2 text-sm leading-6 text-brand-forest/70">
-                      A 5-second video turning your head left and right adds an
-                      extra layer of trust to your profile.
+                      A 3-second liveness video or 3D selfie confirms you're
+                      real and matches your face against your ID photo.
                     </p>
                   </div>
                 </div>
 
                 <div className="rounded-[1.5rem] border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-900">
-                  <strong>Tips for success:</strong> Use natural lighting, face
-                  the camera directly, keep a neutral expression, and ensure
-                  your full face is visible.
+                  <strong>Tips for success:</strong> Ensure your face is well-lit.
+                  Remove glasses and hats. Face the camera directly with your
+                  full face visible.
                 </div>
 
                 <div className="text-center">
@@ -959,131 +953,114 @@ export function LivenessCheckPage() {
 const readinessQuestions = [
   {
     id: 1,
-    question: "What does marriage mean to you?",
+    question: "Ideally, how soon are you looking to transition from meeting to marriage?",
     type: "single" as const,
     options: [
-      "A lifelong covenant before God",
-      "A partnership built on love and commitment",
-      "A cultural and family expectation I embrace",
-      "A foundation for building a family together",
+      "I am ready now",
+      "Within 6 months",
+      "6–12 months",
+      "1–2 years",
     ],
   },
   {
     id: 2,
-    question: "How do you handle disagreements in a relationship?",
+    question: "What is your genotype?",
     type: "single" as const,
-    options: [
-      "I prefer calm discussion until we find common ground",
-      "I need time alone first, then I come back to talk",
-      "I seek advice from a trusted elder or counselor",
-      "I try to compromise quickly to keep the peace",
-    ],
+    options: ["AA", "AS", "SS", "Prefer not to say / Not yet tested"],
   },
   {
     id: 3,
-    question: "How important is financial planning in marriage?",
+    question: "What is your current stance on having or raising children?",
     type: "single" as const,
     options: [
-      "Essential — we should budget and plan together",
-      "Important, but we can figure it out as we go",
-      "I prefer one partner to handle finances",
-      "Money shouldn't be a big topic between spouses",
+      "Want children",
+      "Have children & want more",
+      "Have children & done",
+      "Not looking to have children",
     ],
   },
   {
     id: 4,
-    question: "What role does family play in your marriage decision?",
+    question: "Are you open to relocating for the right partner?",
     type: "single" as const,
     options: [
-      "My family's blessing is essential before I proceed",
-      "I value their input but the final decision is mine",
-      "Family should respect our independence as a couple",
-      "I want a partner who fits well with my extended family",
+      "Yes, locally (within Nigeria)",
+      "Yes, internationally (Diaspora)",
+      "No, I am settled where I am",
     ],
   },
   {
     id: 5,
-    question: "How do you envision household responsibilities?",
+    question: "How do you view financial management in a marriage?",
     type: "single" as const,
     options: [
-      "Shared equally based on availability and skill",
-      "Traditional roles — each person has defined duties",
-      "Flexible — whoever is available handles what's needed",
-      "We should discuss and agree before marriage",
+      "Fully joint accounts",
+      "Separate accounts with a joint household fund",
+      "Traditional (one primary breadwinner)",
     ],
   },
   {
     id: 6,
-    question: "How many children would you like to have?",
+    question: "How important is it that your partner has a similar level of career ambition or income?",
     type: "single" as const,
     options: [
-      "1-2 children",
-      "3-4 children",
-      "Open to however many God blesses us with",
-      "I'd prefer not to have children",
-      "I'm open to discussion with my partner",
+      "Very important",
+      "Somewhat important",
+      "I value character over career status",
     ],
   },
   {
     id: 7,
-    question: "Where would you ideally settle after marriage?",
+    question: "Are you currently managing any significant financial commitments (e.g., family support, business loans) that a partner should be aware of?",
     type: "single" as const,
     options: [
-      "In my current city / state",
-      "Wherever my partner is based",
-      "Abroad (diaspora)",
-      "Open to relocating for the right person",
+      "Yes, and I'm comfortable disclosing this to a serious partner",
+      "Yes, but I'd prefer to discuss it at the right time",
+      "No significant commitments",
     ],
   },
   {
     id: 8,
-    question: "How do you feel about your partner maintaining opposite-gender friendships?",
+    question: "On a scale of 1–5, how central is your religious practice to your daily life and decision-making?",
     type: "single" as const,
-    options: [
-      "Completely fine — trust is the foundation",
-      "Fine with boundaries and transparency",
-      "I'd prefer those friendships to be minimal",
-      "I'm not comfortable with it",
-    ],
+    options: ["1 — Not central at all", "2", "3 — Moderately central", "4", "5 — Central to everything I do"],
   },
   {
     id: 9,
-    question: "What is your approach to faith / spirituality in marriage?",
+    question: "Would you consider a partner from a different denomination or faith background if your core values aligned?",
     type: "single" as const,
     options: [
-      "We must share the same faith and practice together",
-      "Similar values matter more than the same denomination",
-      "I'm open to interfaith marriage",
-      "Spirituality is personal — I don't need alignment",
+      "Strictly my faith only",
+      "Open to different denominations",
+      "Open to other faiths",
     ],
   },
   {
     id: 10,
-    question: "How would you handle a serious health revelation about your partner?",
+    question: "How involved do you expect your extended family to be in your marital decisions?",
     type: "single" as const,
     options: [
-      "It depends on the condition — I'd need more information",
-      "I'd support them regardless if we're committed",
-      "I'd consult family and seek medical advice first",
-      "Honesty about health is a dealbreaker — they should have disclosed early",
+      "Highly involved (Traditional)",
+      "Consulted but we decide independently",
+      "Fully independent",
     ],
   },
   {
     id: 11,
-    question:
-      "What is one non-negotiable quality you need in a life partner?",
-    type: "text" as const,
-    options: [],
-    placeholder: "e.g., Honesty, faith, ambition, kindness...",
+    question: "When a disagreement arises, how do you typically handle it?",
+    type: "single" as const,
+    options: [
+      "Address it immediately",
+      "Take space to reflect first",
+      "Prefer a mediator or counselor",
+    ],
   },
   {
     id: 12,
-    question:
-      "Is there anything else you'd like your future partner to know about you?",
+    question: "In one sentence, what is the one character trait that is absolutely mandatory for your future spouse?",
     type: "text" as const,
     options: [],
-    placeholder:
-      "Share something meaningful — your values, your hopes, or what makes you who you are...",
+    placeholder: "e.g., Honesty, God-fearing, emotional maturity, ambition...",
   },
 ];
 
@@ -1166,8 +1143,9 @@ export function ReviewPage() {
                   Verification in progress
                 </h3>
                 <p className="mt-3 text-sm leading-7 text-brand-forest/70">
-                  Our team is reviewing your identity documents. This typically
-                  takes 24-48 hours. You'll receive an email when it's complete.
+                  Our team is reviewing your identity documents. We manually
+                  review every profile to ensure a high-trust environment.
+                  Expect approval within 12–24 hours.
                 </p>
 
                 {/* Progress steps */}
@@ -1224,13 +1202,11 @@ export function ReviewPage() {
               {/* CTA to questionnaire */}
               <div className="mt-10 rounded-[2rem] border border-brand-clay/20 bg-brand-clay/5 p-8 text-center">
                 <h4 className="font-display text-lg font-semibold text-brand-ink">
-                  While you wait — complete your Marriage Readiness
-                  Questionnaire
+                  While you wait — complete your Marriage Readiness Questionnaire
                 </h4>
                 <p className="mt-2 text-sm leading-6 text-brand-forest/70">
-                  12 thoughtful questions that help us understand your values,
-                  expectations, and compatibility factors. This directly improves
-                  your match quality.
+                  Your answers help us shape better, deeper matches. This directly
+                  improves the quality of people we connect you with.
                 </p>
                 <button
                   className="mt-6 inline-flex items-center gap-2 rounded-full bg-brand-clay px-8 py-3 text-sm font-semibold text-white transition hover:bg-brand-gold"

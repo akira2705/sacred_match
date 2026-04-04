@@ -125,7 +125,7 @@ export function HomePage() {
 
             {/* Primary CTA */}
             <div className="mt-9">
-              <Link className={styles.btnGold} to="/signup">
+              <Link className={styles.btnGold} to="/start">
                 Join the First 1,000 Serious Singles
               </Link>
             </div>
@@ -137,7 +137,7 @@ export function HomePage() {
                 <strong className="text-white">327 people</strong> joined this week
               </span>
               <Link
-                to="/signup"
+                to="/start"
                 className="flex items-center gap-1.5 font-semibold text-white/80 underline-offset-2 transition hover:text-white hover:underline"
               >
                 Join Now →
@@ -436,7 +436,7 @@ export function HomePage() {
                 ))}
               </div>
 
-              <Link className={styles.btnGold} to="/signup">
+              <Link className={styles.btnGold} to="/start">
                 Secure Your Spot
               </Link>
 
