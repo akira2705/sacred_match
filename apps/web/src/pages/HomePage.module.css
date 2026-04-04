@@ -75,6 +75,8 @@
   gap: 0.35rem;
   flex-shrink: 0;
 }
+
+/* RIGHT ribbon: ★ ──────── (star inward, line fades outward) */
 .goldLine::before {
   content: "★";
   color: #C9A227;
@@ -87,7 +89,27 @@
   display: block;
   width: 5.5rem;
   height: 2px;
-  background: linear-gradient(90deg, #C9A227 0%, rgba(201, 162, 39, 0.2) 100%);
+  background: linear-gradient(90deg, #C9A227 0%, rgba(201, 162, 39, 0.15) 100%);
+}
+
+/* LEFT ribbon: ──────── ★ (line fades outward, star inward) */
+.goldLine:first-child::before {
+  content: "";
+  display: block;
+  width: 5.5rem;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(201, 162, 39, 0.15) 0%, #C9A227 100%);
+  text-shadow: none;
+}
+.goldLine:first-child::after {
+  content: "★";
+  width: auto;
+  height: auto;
+  background: none;
+  color: #C9A227;
+  font-size: 0.6rem;
+  line-height: 1;
+  text-shadow: 0 0 8px rgba(201, 162, 39, 0.9);
 }
 
 /* ─── Step number badge ──────────────────────────────────────────────────────── */
