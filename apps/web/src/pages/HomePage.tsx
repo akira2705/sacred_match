@@ -402,20 +402,21 @@ export function HomePage() {
           <div className="mt-12 grid gap-5 sm:grid-cols-3">
             {personas.map((persona, i) => (
               <RevealOnScroll key={persona.title} delay={i * 100}>
-                <article className="group relative overflow-hidden rounded-[2rem] shadow-[0_16px_50px_rgba(0,0,0,0.25)] transition duration-500 hover:-translate-y-2 hover:shadow-[0_28px_70px_rgba(0,0,0,0.38)]">
-                  <img
-                    alt={persona.image.alt}
-                    className="h-64 w-full object-cover transition duration-700 group-hover:scale-[1.06]"
-                    decoding="async"
-                    loading="lazy"
-                    src={persona.image.src}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
-                  <div className="absolute inset-x-0 bottom-0 p-5">
-                    <p className="font-display text-lg font-bold leading-tight text-white">
+                <article className="group overflow-hidden rounded-[2rem] shadow-[0_16px_50px_rgba(0,0,0,0.25)] transition duration-500 hover:-translate-y-2 hover:shadow-[0_28px_70px_rgba(0,0,0,0.38)]">
+                  <div className="overflow-hidden">
+                    <img
+                      alt={persona.image.alt}
+                      className="h-64 w-full object-cover transition duration-700 group-hover:scale-[1.06]"
+                      decoding="async"
+                      loading="lazy"
+                      src={persona.image.src}
+                    />
+                  </div>
+                  <div className="bg-white px-5 py-4">
+                    <p className="font-display text-lg font-bold leading-tight text-brand-forest">
                       {persona.title}
                     </p>
-                    <p className="mt-1 text-sm text-white/65 italic">{persona.tagline}</p>
+                    <p className="mt-1 text-sm text-brand-forest/60 italic">{persona.tagline}</p>
                   </div>
                 </article>
               </RevealOnScroll>
