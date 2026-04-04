@@ -162,16 +162,14 @@ export function HomePage() {
           {/* Right: hero image */}
           <div className="relative z-10 hidden lg:block">
             <div
-              className="overflow-hidden rounded-[2.5rem] border border-white/12 shadow-[0_32px_80px_rgba(0,0,0,0.45)]"
               style={{ animation: "fadeIn 1.1s cubic-bezier(0.22,1,0.36,1) 0.3s both" }}
             >
               <img
                 alt={weddingImages[0].alt}
-                className="h-[620px] w-full object-cover transition duration-700 hover:scale-[1.03]"
+                className="h-[620px] w-full object-contain drop-shadow-2xl transition duration-700 hover:scale-[1.03]"
                 decoding="async"
                 src={weddingImages[0].src}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-brand-ink/30 via-transparent to-transparent" />
             </div>
 
             {/* Match score badge */}

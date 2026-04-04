@@ -1,8 +1,8 @@
 export const weddingImages = [
   {
-    src: "https://images.unsplash.com/photo-1661332306744-70f9ed1a7f40?auto=format&fit=crop&fm=jpg&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bmlnZXJpYW4lMjB3ZWRkaW5nfGVufDB8fDB8fHww&ixlib=rb-4.1.0&q=60&w=3000",
-    alt: "Nigerian wedding couple in traditional attire standing together",
-    caption: "Traditional wedding style",
+    src: "/1.png",
+    alt: "Happy Nigerian couple on their wedding day holding a marriage certificate",
+    caption: "Your success story starts here",
   },
   {
     src: "https://images.unsplash.com/photo-1739526169655-0378b9aae5ab?auto=format&fit=crop&fm=jpg&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8bmlnZXJpYW4lMjB3ZWRkaW5nfGVufDB8fDB8fHww&ixlib=rb-4.1.0&q=60&w=3000",
