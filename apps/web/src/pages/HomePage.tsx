@@ -172,28 +172,6 @@ export function HomePage() {
               />
             </div>
 
-            {/* Match score badge */}
-            <div
-              className="absolute -bottom-5 -left-8 rounded-[1.5rem] border border-white/20 bg-white/96 px-5 py-4 shadow-[0_20px_50px_rgba(0,0,0,0.2)] backdrop-blur"
-              style={{ animation: "fadeIn 0.9s cubic-bezier(0.22,1,0.36,1) 0.65s both" }}
-            >
-              <p className="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-brand-forest/45">
-                Match Score
-              </p>
-              <p className="mt-0.5 font-display text-3xl font-bold text-brand-ink">
-                94 <span className="text-lg font-normal text-brand-forest/35">/ 100</span>
-              </p>
-              <div className="mt-2 h-1.5 w-36 overflow-hidden rounded-full bg-brand-forest/10">
-                <div
-                  className="h-full rounded-full"
-                  style={{
-                    width: "94%",
-                    background: "linear-gradient(90deg, #4A2FAD, #7B6BE0)",
-                    transition: "width 1.6s cubic-bezier(0.22,1,0.36,1) 0.9s",
-                  }}
-                />
-              </div>
-            </div>
           </div>
         </div>
       </section>
