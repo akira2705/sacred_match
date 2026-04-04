@@ -21,7 +21,6 @@ import {
   saveVerificationFlow,
   type VerificationFlow,
 } from "@/lib/profileStorage";
-import { idTypes } from "@/content/onboardingData";
 
 /* ─── shared progress bar ─── */
 

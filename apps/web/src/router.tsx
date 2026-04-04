@@ -83,6 +83,22 @@ function RequireAuth({ children }: { children: ReactElement }) {
   return children;
 }
 
+function RequireAdmin({ children }: { children: ReactElement }) {
+  const location = useLocation();
+  const hasToken = typeof window !== "undefined" && Boolean(window.localStorage.getItem("sacred-match-token"));
+  const isAdmin = typeof window !== "undefined" && window.localStorage.getItem("sacred-match-role") === "admin";
+
+  if (!hasToken) {
+    return <Navigate replace state={{ from: location.pathname }} to="/login" />;
+  }
+
+  if (!isAdmin) {
+    return <Navigate replace to="/dashboard" />;
+  }
+
+  return children;
+}
+
 const privacySections = [
   { heading: "What we collect", body: ["We collect the account, profile, verification, and messaging data needed to run a serious marriage-focused matching product.", "Sensitive fields like genotype and ID data are handled with privacy controls and limited operational access."] },
   { heading: "How we use it", body: ["Data is used for matching, verification, safety review, fraud prevention, and user-controlled product features.", "We do not frame the product around offline ceremony or wedding logistics." ] }
@@ -141,11 +157,11 @@ export const router = createBrowserRouter([
       { path: "settings", element: <RequireAuth><SettingsPage /></RequireAuth> },
       { path: "safety", element: <RequireAuth><SafetyPage /></RequireAuth> },
       { path: "help", element: <RequireAuth><HelpPage /></RequireAuth> },
-      { path: "admin", element: <RequireAuth><AdminDashboardPage /></RequireAuth> },
-      { path: "admin/reports", element: <RequireAuth><AdminReportsPage /></RequireAuth> },
-      { path: "admin/users", element: <RequireAuth><AdminUsersPage /></RequireAuth> },
-      { path: "admin/content", element: <RequireAuth><AdminContentPage /></RequireAuth> },
-      { path: "admin/analytics", element: <RequireAuth><AdminAnalyticsPage /></RequireAuth> },
+      { path: "admin", element: <RequireAdmin><AdminDashboardPage /></RequireAdmin> },
+      { path: "admin/reports", element: <RequireAdmin><AdminReportsPage /></RequireAdmin> },
+      { path: "admin/users", element: <RequireAdmin><AdminUsersPage /></RequireAdmin> },
+      { path: "admin/content", element: <RequireAdmin><AdminContentPage /></RequireAdmin> },
+      { path: "admin/analytics", element: <RequireAdmin><AdminAnalyticsPage /></RequireAdmin> },
     ],
   },
   {

@@ -4,6 +4,7 @@ import jwt, { type SignOptions } from "jsonwebtoken";
 import { z } from "zod";
 import { env } from "../config/env";
 import { prisma } from "../lib/prisma";
+import { requireAuth } from "../middleware/auth.middleware";
 
 const router = Router();
 
@@ -159,6 +160,30 @@ router.post("/login", async (request, response, next) => {
         }
       }
     });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.get("/me", requireAuth, async (request, response, next) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: request.user!.sub },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        role: true,
+        status: true,
+      },
+    });
+
+    if (!user) {
+      return response.status(404).json({ ok: false, error: "User not found" });
+    }
+
+    return response.json({ ok: true, data: user });
   } catch (error) {
     return next(error);
   }

@@ -1,6 +1,6 @@
-﻿const baseURL = import.meta.env.VITE_API_URL;
+const baseURL = import.meta.env.VITE_API_URL;
 
-type RequestMethod = "GET" | "POST";
+type RequestMethod = "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
 
 export type RegistrationIntent = {
   email: string;
@@ -74,22 +74,37 @@ type OverviewResponse = {
   data?: OverviewPayload;
 };
 
+function getStoredToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem("sacred-match-token");
+}
+
 async function apiRequest<TResponse>(
   path: string,
   options?: {
     method?: RequestMethod;
     body?: unknown;
+    auth?: boolean; // default true — include token if available
   },
 ): Promise<TResponse> {
   if (!baseURL) {
     throw new Error("API URL is not configured");
   }
 
+  const includeAuth = options?.auth !== false;
+  const token = includeAuth ? getStoredToken() : null;
+
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
   const response = await fetch(`${baseURL}${path}`, {
     method: options?.method ?? "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers,
     body: options?.body ? JSON.stringify(options.body) : undefined,
   });
 
@@ -97,9 +112,11 @@ async function apiRequest<TResponse>(
     let message = `Request failed with status ${response.status}`;
 
     try {
-      const errorPayload = (await response.json()) as { message?: string };
+      const errorPayload = (await response.json()) as { message?: string; error?: string };
       if (errorPayload.message) {
         message = errorPayload.message;
+      } else if (errorPayload.error) {
+        message = errorPayload.error;
       }
     } catch {
       // Keep the fallback message when the response body is not JSON.
@@ -137,7 +154,7 @@ export async function getLandingPageContent(): Promise<LandingPageContent> {
   }
 
   try {
-    const response = await apiRequest<OverviewResponse>("/public/overview");
+    const response = await apiRequest<OverviewResponse>("/public/overview", { auth: false });
     const ethnicHighlights =
       response.data?.ethnicGroups?.map(
         (group) => `${group.name} (${group.region}) - ${group.focus}`,
@@ -165,28 +182,38 @@ export async function submitRegistrationIntent(payload: RegistrationIntent) {
   return apiRequest<{ message: string }>("/auth/register", {
     method: "POST",
     body: payload,
+    auth: false,
   });
 }
 
 export async function loginUser(payload: LoginPayload) {
   if (!baseURL) {
     return {
-      message:
-        "Login flow is wired locally. Connect the API URL to authenticate users.",
+      message: "Login flow is wired locally. Connect the API URL to authenticate users.",
       token: "local-development-token",
+      role: null as string | null,
     };
   }
 
-  const response = await apiRequest<{ data?: { token?: string }; message?: string }>(
-    "/auth/login",
-    {
-      method: "POST",
-      body: payload,
-    },
-  );
+  const response = await apiRequest<{
+    data?: { token?: string; user?: { role?: string } };
+    message?: string;
+  }>("/auth/login", {
+    method: "POST",
+    body: payload,
+    auth: false,
+  });
 
   return {
     message: response.message ?? "Login successful",
     token: response.data?.token ?? "",
+    role: response.data?.user?.role ?? null,
   };
+}
+
+export async function getMe() {
+  return apiRequest<{
+    ok: boolean;
+    data?: { id: string; email: string; firstName: string; lastName: string; role: string };
+  }>("/auth/me");
 }
