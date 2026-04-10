@@ -55,17 +55,17 @@ const personas = [
   {
     title: "Faith Driven Professionals",
     tagline: "You want values, not vibes",
-    image: weddingImages[0],
+    image: { src: "https://images.pexels.com/photos/31563146/pexels-photo-31563146.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop", alt: "Nigerian couple in traditional attire smiling warmly" },
   },
   {
     title: "Mature & Intentional Singles",
     tagline: "You are ready for something real again",
-    image: weddingImages[1],
+    image: { src: "https://images.pexels.com/photos/32223290/pexels-photo-32223290.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop", alt: "Couple in traditional Nigerian attire holding hands intimately" },
   },
   {
     title: "Diaspora Africans",
     tagline: "You want culture + compatibility",
-    image: weddingImages[2],
+    image: { src: "https://images.pexels.com/photos/19068542/pexels-photo-19068542.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop", alt: "Elegant African couple portrait in formal attire" },
   },
 ];
 
@@ -384,7 +384,7 @@ export function HomePage() {
                   <div className="overflow-hidden">
                     <img
                       alt={persona.image.alt}
-                      className="h-64 w-full object-cover transition duration-700 group-hover:scale-[1.06]"
+                      className="h-64 w-full object-cover object-top transition duration-700 group-hover:scale-[1.06]"
                       decoding="async"
                       loading="lazy"
                       src={persona.image.src}
