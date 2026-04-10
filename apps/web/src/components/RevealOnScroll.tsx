@@ -16,7 +16,7 @@ export function RevealOnScroll({
   delay = 0,
   threshold = 0.16,
   rootMargin = "0px 0px -10% 0px",
-  once = true,
+  once = false,
 }: RevealOnScrollProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
