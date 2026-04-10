@@ -179,7 +179,7 @@ export function HomePage() {
       {/* ══════════════════════════════════════════════════════════════════
           PROBLEM — white / cream
       ══════════════════════════════════════════════════════════════════ */}
-      <section className="bg-white py-20 sm:py-28">
+      <section className="bg-white py-10 sm:py-14">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <RevealOnScroll>
             <div className="flex items-center justify-center gap-4">
@@ -215,7 +215,7 @@ export function HomePage() {
       {/* ══════════════════════════════════════════════════════════════════
           HOW IT WORKS — mottled purple
       ══════════════════════════════════════════════════════════════════ */}
-      <section className={`${styles.purpleSection} py-20 sm:py-28`}>
+      <section className={`${styles.purpleSection} py-10 sm:py-14`}>
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <RevealOnScroll>
             <div className="flex items-center justify-center gap-4">
@@ -246,7 +246,7 @@ export function HomePage() {
       {/* ══════════════════════════════════════════════════════════════════
           TRUST — white
       ══════════════════════════════════════════════════════════════════ */}
-      <section className="bg-white py-20 sm:py-28">
+      <section className="bg-white py-10 sm:py-14">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <RevealOnScroll>
             <div className="flex items-center justify-center gap-4">
@@ -277,7 +277,7 @@ export function HomePage() {
       {/* ══════════════════════════════════════════════════════════════════
           GENOTYPE / DNA — light lavender tint
       ══════════════════════════════════════════════════════════════════ */}
-      <section className={`${styles.dnaSection} py-20 sm:py-28`}>
+      <section className={`${styles.dnaSection} py-10 sm:py-14`}>
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             {/* Left */}
@@ -362,7 +362,7 @@ export function HomePage() {
       {/* ══════════════════════════════════════════════════════════════════
           FOUNDING MEMBER CTA — mottled purple
       ══════════════════════════════════════════════════════════════════ */}
-      <section className={`${styles.purpleSection} py-20 sm:py-28`}>
+      <section className={`${styles.purpleSection} py-10 sm:py-14`}>
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <RevealOnScroll>
             <div className="flex items-center justify-center gap-4">
