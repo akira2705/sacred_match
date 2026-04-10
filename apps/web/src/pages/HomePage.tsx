@@ -284,7 +284,7 @@ export function HomePage() {
             <RevealOnScroll>
               <div className="inline-flex items-center gap-2 rounded-full border border-brand-forest/15 bg-brand-forest/8 px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-brand-forest">
                 <Dna size={13} />
-                Nigeria's First
+                Genotype Matching
               </div>
               <h2 className="mt-5 font-display text-3xl font-bold text-brand-ink sm:text-4xl">
                 Smart Genotype Matching —{" "}
