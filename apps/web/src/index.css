@@ -193,35 +193,14 @@ h6 {
 }
 
 /* ─── Loading screen keyframes ──────────────────────────────────────────── */
-@keyframes letterRise {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes smRingRotate {
+  from { transform: rotate(-90deg); }
+  to   { transform: rotate(270deg); }
 }
 
-@keyframes loadingPulse {
-  0%, 100% {
-    opacity: 0.9;
-    transform: scale(1);
-    box-shadow: 0 0 40px rgba(123, 107, 224, 0.5);
-  }
-  50% {
-    opacity: 0.65;
-    transform: scale(0.93);
-    box-shadow: 0 0 20px rgba(123, 107, 224, 0.25);
-  }
-}
-
-@keyframes loadingBar {
-  0%   { width: 0%;   margin-left: 0%;   }
-  40%  { width: 60%;  margin-left: 0%;   }
-  60%  { width: 60%;  margin-left: 40%;  }
-  100% { width: 0%;   margin-left: 100%; }
+@keyframes smMonoPulse {
+  0%, 100% { opacity: 0.45; transform: scale(1);    }
+  50%       { opacity: 0.7;  transform: scale(1.04); }
 }
 
 /* ─── Reduced motion ─────────────────────────────────────────────────────── */
