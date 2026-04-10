@@ -95,10 +95,10 @@ export function HomePage() {
         <div className={`${styles.orb} right-8   top-16  h-20 w-20 bg-brand-clay/20`} style={{ animationDelay: "4s" }} />
         <div className={`${styles.orb} bottom-0  right-[22%] h-44 w-44 bg-white/6`}  style={{ animationDelay: "8s" }} />
 
-        <div className="mx-auto grid min-h-[calc(100vh-5rem)] max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:items-center lg:px-8 lg:py-24">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 pt-6 pb-0 sm:px-6 lg:grid-cols-2 lg:items-end lg:px-8">
 
           {/* Left copy */}
-          <div className="relative z-10 flex flex-col justify-center">
+          <div className="relative z-10 flex flex-col justify-center self-center py-10">
             {/* Trust pills */}
             <div className="flex flex-wrap gap-3">
               <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm">
