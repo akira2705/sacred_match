@@ -120,7 +120,7 @@ export function HomePage() {
             </h1>
 
             <p className="mt-5 max-w-md text-lg leading-8 text-white/70">
-              A verified platform for serious, marriage-minded singles.
+              A verified platform for marriage-minded singles ready for real commitment.
             </p>
 
             {/* Primary CTA */}
@@ -147,8 +147,8 @@ export function HomePage() {
             {/* Trust bar */}
             <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-white/10 pt-8">
               {[
-                { icon: ShieldCheck, label: "ID Verified Profiles" },
-                { icon: Users,       label: "Human Moderation" },
+                { icon: ShieldCheck, label: "Free Verification" },
+                { icon: Users,       label: "Manual Review" },
                 { icon: Shield,      label: "Privacy First" },
               ].map(({ icon: Icon, label }) => (
                 <div key={label} className="flex items-center gap-2 text-sm font-medium text-white/60">
