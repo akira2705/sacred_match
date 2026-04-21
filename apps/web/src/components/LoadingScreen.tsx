@@ -3,9 +3,9 @@ import { useEffect, useRef, useState, useMemo } from "react";
 /* ────────────────────────────────────────────────────────────────────────────
    SACRED MATCH — Cinematic Loading Screen
 
-   1. LOADING  — floating gold particles, SVG ring progressively draws itself
-                  while spinning, SM monogram inside
-   2. CHARGED  — ring completes, gold flash, diamond accents appear
+   1. LOADING  — Spiral Search animation (Archimedean spiral + gold particles)
+                  SM monogram at centre
+   2. CHARGED  — spiral completes, gold flash, diamond accents appear
    3. REVEAL   — gold lines shoot outward, letters 3D-flip in one-by-one,
                   ornamental filigree wings, tagline letter-spacing compresses
    4. HOLD     — everything pristine
@@ -18,96 +18,153 @@ type Phase = "loading" | "charged" | "reveal" | "hold" | "exit" | "done";
 const SACRED = "SACRED".split("");
 const MATCH  = "MATCH".split("");
 
-const R    = 44;
-const CIRC = 2 * Math.PI * R; // ≈ 276.5
+// ── Spiral config (matches the provided Spiral Search formula) ──────────────
+const SPIRAL = {
+  particleCount: 86,
+  trailSpan: 0.28,
+  durationMs: 7800,
+  pulseDurationMs: 6800,
+  strokeWidth: 1.8,
+  searchTurns: 4.0,
+  searchBaseRadius: 8.0,
+  searchRadiusAmp: 8.5,
+  searchPulse: 2.4,
+  searchScale: 1.0,
+};
 
-// Generate random particles once
+function spiralPoint(progress: number, detailScale: number) {
+  const t = progress * Math.PI * 2;
+  const angle = t * SPIRAL.searchTurns;
+  const radius =
+    SPIRAL.searchBaseRadius +
+    (1 - Math.cos(t)) *
+      (SPIRAL.searchRadiusAmp + detailScale * SPIRAL.searchPulse);
+  return {
+    x: 50 + Math.cos(angle) * radius * SPIRAL.searchScale,
+    y: 50 + Math.sin(angle) * radius * SPIRAL.searchScale,
+  };
+}
+
+function buildSpiralPath(detailScale: number, steps = 360) {
+  return Array.from({ length: steps + 1 }, (_, i) => {
+    const p = spiralPoint(i / steps, detailScale);
+    return `${i === 0 ? "M" : "L"} ${p.x.toFixed(2)} ${p.y.toFixed(2)}`;
+  }).join(" ");
+}
+
+function getDetailScale(time: number) {
+  const pulseProgress = (time % SPIRAL.pulseDurationMs) / SPIRAL.pulseDurationMs;
+  return 0.52 + ((Math.sin(pulseProgress * Math.PI * 2 + 0.55) + 1) / 2) * 0.48;
+}
+
+function normalizeProgress(p: number) {
+  return ((p % 1) + 1) % 1;
+}
+
+// Generate random background particles once
 function makeParticles(n: number) {
   return Array.from({ length: n }, (_, i) => ({
     id: i,
     x: Math.random() * 100,
     y: Math.random() * 100,
-    size: 4 + Math.random() * 6,           // 4–10 px
+    size: 4 + Math.random() * 6,
     delay: Math.random() * 5,
     duration: 3.5 + Math.random() * 4,
-    opacity: 0.3 + Math.random() * 0.5,    // 0.3–0.8
+    opacity: 0.3 + Math.random() * 0.5,
   }));
 }
 
 export function LoadingScreen() {
   const [phase, setPhase] = useState<Phase>("loading");
-  const [ringOffset, setRingOffset] = useState(CIRC);    // fully hidden → 0 = fully drawn
   const [letterIdx, setLetterIdx] = useState(-1);
   const [linesShot, setLinesShot] = useState(false);
   const [filigreeOpen, setFiligreeOpen] = useState(false);
   const [taglineIn, setTaglineIn] = useState(false);
   const [flashVisible, setFlashVisible] = useState(false);
+  const [chargedScale, setChargedScale] = useState(false);
   const particles = useMemo(() => makeParticles(32), []);
   const timerRef = useRef<ReturnType<typeof setTimeout>[]>([]);
-  const rafRef   = useRef<number | null>(null);
+
+  // Spiral SVG refs
+  const spiralPathRef  = useRef<SVGPathElement | null>(null);
+  const spiralGroupRef = useRef<SVGGElement | null>(null);
+  const dotRefs        = useRef<SVGCircleElement[]>([]);
+  const rafRef         = useRef<number | null>(null);
+  const startedAtRef   = useRef<number | null>(null);
 
   const clearTimers = () => { timerRef.current.forEach(clearTimeout); timerRef.current = []; };
   const t = (fn: () => void, ms: number) => { timerRef.current.push(setTimeout(fn, ms)); };
 
-  // ── JS-driven ring draw (ease-out over ~2.8s during loading) ──────────────
+  // ── Spiral animation loop ─────────────────────────────────────────────────
   useEffect(() => {
-    if (phase !== "loading") return;
-    const start = Date.now();
-    const duration = 2800;
-    const startOffset = CIRC;            // fully hidden
-    const endOffset   = CIRC * 0.22;     // ~78% drawn
+    if (phase !== "loading" && phase !== "charged") return;
 
-    const tick = () => {
-      const elapsed = Date.now() - start;
-      const p = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - p, 3); // cubic ease-out
-      setRingOffset(startOffset - (startOffset - endOffset) * eased);
-      if (p < 1) rafRef.current = requestAnimationFrame(tick);
+    const render = (now: number) => {
+      if (!startedAtRef.current) startedAtRef.current = now;
+      const time = now - startedAtRef.current;
+      const progress = (time % SPIRAL.durationMs) / SPIRAL.durationMs;
+      const detailScale = getDetailScale(time);
+
+      if (spiralPathRef.current) {
+        spiralPathRef.current.setAttribute("d", buildSpiralPath(detailScale));
+      }
+
+      dotRefs.current.forEach((node, index) => {
+        if (!node) return;
+        const tailOffset = index / (SPIRAL.particleCount - 1);
+        const pt = spiralPoint(
+          normalizeProgress(progress - tailOffset * SPIRAL.trailSpan),
+          detailScale,
+        );
+        const fade = Math.pow(1 - tailOffset, 0.56);
+        node.setAttribute("cx", pt.x.toFixed(2));
+        node.setAttribute("cy", pt.y.toFixed(2));
+        node.setAttribute("r",  (0.9 + fade * 2.7).toFixed(2));
+        node.setAttribute("opacity", (0.04 + fade * 0.96).toFixed(3));
+      });
+
+      rafRef.current = requestAnimationFrame(render);
     };
-    rafRef.current = requestAnimationFrame(tick);
+
+    rafRef.current = requestAnimationFrame(render);
     return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
   }, [phase]);
 
-  // ── Wait for page load → CHARGED ──────────────────────────────────────────
+  // ── Wait for page load → CHARGED ─────────────────────────────────────────
   useEffect(() => {
-    const MIN = 800;
+    const MIN = 900;
     const t0 = Date.now();
     const go = () => {
       const wait = Math.max(0, MIN - (Date.now() - t0));
-      setTimeout(() => {
-        setRingOffset(0);                  // complete the ring
-        setPhase("charged");
-      }, wait);
+      setTimeout(() => setPhase("charged"), wait);
     };
     document.readyState === "complete"
       ? go()
       : window.addEventListener("load", go, { once: true });
   }, []);
 
-  // ── CHARGED → flash → REVEAL ──────────────────────────────────────────────
+  // ── CHARGED → flash → scale burst → REVEAL ───────────────────────────────
   useEffect(() => {
     if (phase !== "charged") return;
     setFlashVisible(true);
+    setChargedScale(true);
     t(() => setFlashVisible(false), 250);
-    t(() => setPhase("reveal"), 400);
+    t(() => setChargedScale(false), 600);
+    t(() => setPhase("reveal"), 650);
     return clearTimers;
   }, [phase]);
 
-  // ── REVEAL — orchestrate everything ───────────────────────────────────────
+  // ── REVEAL — orchestrate text ─────────────────────────────────────────────
   useEffect(() => {
     if (phase !== "reveal") return;
-
     t(() => setLinesShot(true), 0);
-
     const totalLetters = SACRED.length + MATCH.length;
     for (let i = 0; i < totalLetters; i++) {
       t(() => setLetterIdx(i), 120 + i * 75);
     }
-
     t(() => setFiligreeOpen(true), 120 + totalLetters * 75 + 120);
     t(() => setTaglineIn(true),    120 + totalLetters * 75 + 380);
     t(() => setPhase("hold"),      120 + totalLetters * 75 + 950);
-
     return clearTimers;
   }, [phase]);
 
@@ -127,15 +184,15 @@ export function LoadingScreen() {
 
   if (phase === "done") return null;
 
-  const isExiting  = phase === "exit";
-  const isLoading  = phase === "loading";
-  const pastLoading = phase !== "loading";
+  const isExiting   = phase === "exit";
   const showContent = ["reveal", "hold", "exit"].includes(phase);
+  const pastLoading = phase !== "loading";
 
-  // ── Diamond positions on ring ─────────────────────────────────────────────
+  // Diamond positions (for the charged burst)
   const diamonds = [0, 90, 180, 270].map(deg => {
     const rad = (deg - 90) * Math.PI / 180;
-    return { deg, cx: 60 + R * Math.cos(rad), cy: 60 + R * Math.sin(rad) };
+    const r = 32;
+    return { deg, cx: 50 + r * Math.cos(rad), cy: 50 + r * Math.sin(rad) };
   });
 
   return (
@@ -218,66 +275,86 @@ export function LoadingScreen() {
           />
         )}
 
-        {/* ── SVG Ring + SM Monogram ──────────────────────────────────────── */}
-        <div className="relative mb-6">
-          <svg width="120" height="120" viewBox="0 0 120 120" style={{ overflow: "visible" }}>
+        {/* ── SPIRAL SEARCH SYMBOL ────────────────────────────────────────── */}
+        <div
+          className="relative mb-6"
+          style={{
+            transform: chargedScale ? "scale(1.18)" : "scale(1)",
+            transition: "transform 0.45s cubic-bezier(0.34,1.56,0.64,1)",
+          }}
+        >
+          <svg
+            viewBox="0 0 100 100"
+            fill="none"
+            style={{
+              width: "min(38vmin, 160px)",
+              height: "min(38vmin, 160px)",
+              overflow: "visible",
+              color: "#C9A227",
+              filter: pastLoading
+                ? "drop-shadow(0 0 8px rgba(201,162,39,0.55))"
+                : "none",
+              transition: "filter 0.4s ease",
+            }}
+          >
             <defs>
-              <linearGradient id="smGoldStroke" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%"   stopColor="#C9A227" />
-                <stop offset="50%"  stopColor="#F5E17D" />
-                <stop offset="100%" stopColor="#C9A227" />
-              </linearGradient>
+              <radialGradient id="spiralGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%"  stopColor="#F5E17D" stopOpacity="0.15" />
+                <stop offset="100%" stopColor="#C9A227" stopOpacity="0" />
+              </radialGradient>
             </defs>
 
-            {/* Faint track */}
-            <circle cx="60" cy="60" r={R} fill="none" stroke="rgba(201,162,39,0.06)" strokeWidth="1" />
+            {/* Soft glow background */}
+            <circle cx="50" cy="50" r="48" fill="url(#spiralGlow)" />
 
-            {/* Spinning group */}
-            <g style={{
-              transformOrigin: "60px 60px",
-              animation: isLoading ? "smRingSpin 1.8s linear infinite" : "none",
-              transform: isLoading ? undefined : "rotate(0deg)",
-            }}>
-              <circle
-                cx="60" cy="60" r={R}
-                fill="none"
-                stroke="url(#smGoldStroke)"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeDasharray={CIRC}
-                strokeDashoffset={ringOffset}
-                style={{
-                  transition: pastLoading ? "stroke-dashoffset 0.45s ease" : "none",
-                  filter: pastLoading ? "drop-shadow(0 0 6px rgba(201,162,39,0.7))" : "none",
-                }}
-              />
+            {/* Faint static spiral path */}
+            <path
+              ref={spiralPathRef}
+              stroke="currentColor"
+              strokeWidth={SPIRAL.strokeWidth}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              opacity="0.12"
+            />
+
+            {/* Particle dots group */}
+            <g ref={spiralGroupRef}>
+              {Array.from({ length: SPIRAL.particleCount }, (_, i) => (
+                <circle
+                  key={i}
+                  ref={el => { if (el) dotRefs.current[i] = el; }}
+                  fill="currentColor"
+                />
+              ))}
             </g>
 
-            {/* 4 diamond accents — fade+scale in, NO CSS transform animation */}
+            {/* Diamond accents when charged */}
             {pastLoading && diamonds.map((d, idx) => (
               <rect
                 key={d.deg}
-                x={d.cx - 2.5} y={d.cy - 2.5}
-                width={5} height={5}
+                x={d.cx - 2} y={d.cy - 2}
+                width={4} height={4}
                 fill="#F5E17D"
                 transform={`rotate(45 ${d.cx} ${d.cy})`}
                 style={{
                   opacity: 0,
-                  animation: `smFadeIn 0.35s ease ${0.1 + idx * 0.08}s forwards`,
+                  animation: `smFadeIn 0.35s ease ${0.08 + idx * 0.07}s forwards`,
                 }}
               />
             ))}
           </svg>
 
-          {/* SM Monogram */}
+          {/* SM Monogram — centred over spiral */}
           <div
             className="absolute inset-0 flex items-center justify-center"
             style={{
               fontFamily: "Georgia, 'Times New Roman', serif",
-              fontSize: "1.15rem",
+              fontSize: "clamp(0.85rem, 2.4vmin, 1.1rem)",
               letterSpacing: "0.14em",
-              color: pastLoading ? "#F5E17D" : "rgba(201,162,39,0.35)",
-              textShadow: pastLoading ? "0 0 16px rgba(201,162,39,0.9)" : "none",
+              color: pastLoading ? "#F5E17D" : "rgba(201,162,39,0.5)",
+              textShadow: pastLoading
+                ? "0 0 16px rgba(201,162,39,0.9), 0 0 32px rgba(201,162,39,0.4)"
+                : "none",
               transition: "color 0.4s ease, text-shadow 0.4s ease",
             }}
           >
@@ -287,7 +364,6 @@ export function LoadingScreen() {
 
         {/* ── SHOOTING GOLD LINES ────────────────────────────────────────── */}
         <div className="relative flex items-center justify-center w-full mb-5" style={{ height: 2 }}>
-          {/* Left line */}
           <div
             className="absolute right-1/2"
             style={{
@@ -299,7 +375,6 @@ export function LoadingScreen() {
               transformOrigin: "right center",
             }}
           />
-          {/* Center diamond */}
           <div
             style={{
               width: 8, height: 8,
@@ -311,7 +386,6 @@ export function LoadingScreen() {
               zIndex: 1,
             }}
           />
-          {/* Right line */}
           <div
             className="absolute left-1/2"
             style={{
@@ -382,7 +456,6 @@ export function LoadingScreen() {
 
         {/* ── ORNAMENTAL FILIGREE WINGS ──────────────────────────────────── */}
         <div className="relative flex items-center justify-center w-full mb-4" style={{ height: 14 }}>
-          {/* Left wing */}
           <svg
             className="absolute"
             style={{
@@ -400,8 +473,6 @@ export function LoadingScreen() {
             <circle cx="20" cy="7" r="2.5" fill="#F5E17D" />
             <polygon points="6,7 11,3 16,7 11,11" fill="#C9A227" opacity="0.7" />
           </svg>
-
-          {/* Center star */}
           <div
             style={{
               fontSize: "0.65rem",
@@ -414,8 +485,6 @@ export function LoadingScreen() {
           >
             ✦
           </div>
-
-          {/* Right wing */}
           <svg
             className="absolute"
             style={{
@@ -435,7 +504,7 @@ export function LoadingScreen() {
           </svg>
         </div>
 
-        {/* ── TAGLINE — letter-spacing compress ──────────────────────────── */}
+        {/* ── TAGLINE ─────────────────────────────────────────────────────── */}
         <p
           style={{
             fontFamily: "Georgia, 'Times New Roman', serif",
@@ -452,6 +521,22 @@ export function LoadingScreen() {
           Serious connections only
         </p>
       </div>
+
+      {/* ── Keyframes injected once ──────────────────────────────────────────── */}
+      <style>{`
+        @keyframes smFloat {
+          from { transform: translateY(0px) scale(1); }
+          to   { transform: translateY(-18px) scale(1.08); }
+        }
+        @keyframes smFlash {
+          0%   { opacity: 1; transform: scale(0.6); }
+          100% { opacity: 0; transform: scale(2.2); }
+        }
+        @keyframes smFadeIn {
+          from { opacity: 0; transform: scale(0) rotate(45deg); }
+          to   { opacity: 1; transform: scale(1) rotate(45deg); }
+        }
+      `}</style>
     </>
   );
 }
