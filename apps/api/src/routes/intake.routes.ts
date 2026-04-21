@@ -42,7 +42,7 @@ router.post("/", async (request, response, next) => {
       request.socket.remoteAddress ??
       null;
 
-    const submission = await prisma.intakeSubmission.create({
+    const submission = await (prisma as any).intakeSubmission.create({
       data: {
         firstName: payload.firstName.trim(),
         lastName: payload.lastName.trim(),
@@ -55,7 +55,8 @@ router.post("/", async (request, response, next) => {
         genotypeAwareness: payload.genotypeAwareness,
         referrer: payload.referrer ?? null,
         ipAddress,
-        metadata: payload.metadata ?? null,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        metadata: (payload.metadata ?? undefined) as any,
       },
     });
 

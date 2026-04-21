@@ -1,8 +1,13 @@
 /* ─── Exact purple texture image ─────────────────────────────────────────── */
-.heroBackdrop,
 .purpleSection {
   position: relative;
   overflow: hidden;
+}
+
+.heroBackdrop {
+  position: relative;
+  overflow-x: clip;
+  overflow-y: visible;
   background-image: url('/purple-bg.png');
   background-size: cover;
   background-position: center center;

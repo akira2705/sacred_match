@@ -14,6 +14,12 @@ const envSchema = z.object({
   // Email (optional — logs to console if not set)
   RESEND_API_KEY: z.string().optional(),
   EMAIL_FROM: z.string().optional(),
+  // File storage (optional — returns dev placeholder if not set)
+  CLOUDINARY_URL: z.string().optional(),
+  S3_BUCKET: z.string().optional(),
+  S3_REGION: z.string().optional(),
+  S3_ACCESS_KEY: z.string().optional(),
+  S3_SECRET_KEY: z.string().optional(),
 });
 
 export const env = envSchema.parse(process.env);

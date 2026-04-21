@@ -1,6 +1,7 @@
 import { CheckCircle2, Clock, Dna, Flame, Heart, HeartCrack, MessageCircleX, Shield, ShieldCheck, ShieldX, Sparkles, Star, TrendingDown, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { RevealOnScroll } from "@/components/RevealOnScroll";
+import { Seo } from "@/components/Seo";
 import { weddingImages } from "@/content/visuals";
 import styles from "./HomePage.module.css";
 
@@ -86,6 +87,11 @@ const goldStyle: React.CSSProperties = {
 export function HomePage() {
   return (
     <div className="font-body">
+      <Seo
+        title="Find a Life Partner, Not Just a Date"
+        description="Sacred Match is Nigeria's premium matrimony platform for verified, marriage-minded singles. Genotype-aware matching, identity verification, and culture-first compatibility."
+        canonical="https://sacred-match.ng"
+      />
 
       {/* ══════════════════════════════════════════════════════════════════
           HERO — mottled purple, full viewport
@@ -95,7 +101,7 @@ export function HomePage() {
         <div className={`${styles.orb} right-8   top-16  h-20 w-20 bg-brand-clay/20`} style={{ animationDelay: "4s" }} />
         <div className={`${styles.orb} bottom-0  right-[22%] h-44 w-44 bg-white/6`}  style={{ animationDelay: "8s" }} />
 
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 pt-6 pb-0 sm:px-6 lg:grid-cols-2 lg:items-end lg:px-8">
+        <div className="mx-auto grid max-w-7xl gap-6 px-4 pt-6 pb-0 sm:px-6 lg:grid-cols-2 lg:items-end lg:px-8">
 
           {/* Left copy */}
           <div className="relative z-10 flex flex-col justify-center self-center py-10">
@@ -147,19 +153,18 @@ export function HomePage() {
             </div>
           </div>
 
-          {/* Right: hero image */}
-          <div className="relative z-10 hidden lg:flex lg:items-end lg:justify-center">
+          {/* Right / Below (mobile): hero image */}
+          <div className="relative z-10 flex items-end justify-center lg:items-end lg:justify-center">
             <div
               style={{ animation: "fadeIn 1.1s cubic-bezier(0.22,1,0.36,1) 0.3s both" }}
             >
               <img
                 alt={weddingImages[0].alt}
-                className="h-[750px] w-auto max-w-none object-contain drop-shadow-2xl transition duration-700 hover:scale-[1.03]"
+                className="mx-auto h-[340px] w-auto max-w-full object-contain drop-shadow-2xl transition duration-700 hover:scale-[1.03] sm:h-[480px] lg:h-[750px] lg:max-w-none"
                 decoding="async"
                 src={weddingImages[0].src}
               />
             </div>
-
           </div>
         </div>
       </section>

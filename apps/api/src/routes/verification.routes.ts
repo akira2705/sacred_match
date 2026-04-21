@@ -74,7 +74,7 @@ router.post("/intent", requireAuth, async (request, response, next) => {
     const record = await prisma.verificationRecord.create({
       data: {
         userId,
-        type: "INTENT",
+        type: "INTENT" as any,
         status: "PENDING",
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         metadata: payload as any,
@@ -114,7 +114,7 @@ router.post("/questionnaire", requireAuth, async (request, response, next) => {
     const record = await prisma.verificationRecord.create({
       data: {
         userId,
-        type: "QUESTIONNAIRE",
+        type: "QUESTIONNAIRE" as any,
         status: "PENDING",
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         metadata: { answers: payload.answers, submittedAt: new Date().toISOString() } as any,
@@ -184,7 +184,7 @@ router.post("/liveness", requireAuth, async (request, response, next) => {
     const record = await prisma.verificationRecord.create({
       data: {
         userId,
-        type: "LIVENESS",
+        type: "LIVENESS" as any,
         status: "PENDING",
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         metadata: { ...payload, submittedAt: new Date().toISOString() } as any,

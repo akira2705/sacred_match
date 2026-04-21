@@ -222,7 +222,7 @@ router.post("/otp/send", requireAuth, async (request, response, next) => {
     if (!user) return response.status(404).json({ ok: false, error: "User not found" });
 
     // Invalidate any recent unexpired OTPs for same user+channel+purpose
-    await prisma.otpToken.updateMany({
+    await (prisma as any).otpToken.updateMany({
       where: { userId, channel: payload.channel, purpose: payload.purpose, usedAt: null },
       data: { usedAt: new Date() },
     });
@@ -231,7 +231,7 @@ router.post("/otp/send", requireAuth, async (request, response, next) => {
     const otpHash = await bcrypt.hash(otp, 10);
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-    await prisma.otpToken.create({
+    await (prisma as any).otpToken.create({
       data: { userId, channel: payload.channel, purpose: payload.purpose, otpHash, expiresAt },
     });
 
@@ -264,7 +264,7 @@ router.post("/otp/verify", requireAuth, async (request, response, next) => {
     const userId = request.user!.sub;
     const payload = otpVerifySchema.parse(request.body);
 
-    const latestToken = await prisma.otpToken.findFirst({
+    const latestToken = await (prisma as any).otpToken.findFirst({
       where: {
         userId,
         channel: payload.channel,
@@ -284,7 +284,7 @@ router.post("/otp/verify", requireAuth, async (request, response, next) => {
       return response.status(429).json({ ok: false, error: "Too many attempts. Please request a new OTP." });
     }
 
-    await prisma.otpToken.update({ where: { id: latestToken.id }, data: { attempts: { increment: 1 } } });
+    await (prisma as any).otpToken.update({ where: { id: latestToken.id }, data: { attempts: { increment: 1 } } });
 
     const matches = await bcrypt.compare(payload.otp, latestToken.otpHash);
     if (!matches) {
@@ -292,7 +292,7 @@ router.post("/otp/verify", requireAuth, async (request, response, next) => {
     }
 
     // Mark as used
-    await prisma.otpToken.update({ where: { id: latestToken.id }, data: { usedAt: new Date() } });
+    await (prisma as any).otpToken.update({ where: { id: latestToken.id }, data: { usedAt: new Date() } });
 
     // If this was an email verification, create/update a VerificationRecord
     if (payload.purpose === "verification" && payload.channel === "email") {
@@ -331,7 +331,7 @@ router.post("/password/forgot", async (request, response, next) => {
     }
 
     // Invalidate existing tokens
-    await prisma.passwordResetToken.updateMany({
+    await (prisma as any).passwordResetToken.updateMany({
       where: { userId: user.id, usedAt: null },
       data: { usedAt: new Date() },
     });
@@ -340,7 +340,7 @@ router.post("/password/forgot", async (request, response, next) => {
     const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
 
-    await prisma.passwordResetToken.create({
+    await (prisma as any).passwordResetToken.create({
       data: { userId: user.id, tokenHash, expiresAt },
     });
 
@@ -374,7 +374,7 @@ router.post("/password/reset", async (request, response, next) => {
 
     const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
 
-    const resetRecord = await prisma.passwordResetToken.findUnique({
+    const resetRecord = await (prisma as any).passwordResetToken.findUnique({
       where: { tokenHash },
       include: { user: { select: { id: true, email: true } } },
     });
@@ -387,7 +387,7 @@ router.post("/password/reset", async (request, response, next) => {
 
     await prisma.$transaction([
       prisma.user.update({ where: { id: resetRecord.userId }, data: { passwordHash } }),
-      prisma.passwordResetToken.update({ where: { id: resetRecord.id }, data: { usedAt: new Date() } }),
+      (prisma as any).passwordResetToken.update({ where: { id: resetRecord.id }, data: { usedAt: new Date() } }),
     ]);
 
     return response.json({ ok: true, message: "Password reset successfully. You can now log in." });
