@@ -7,6 +7,7 @@ import { env } from "../config/env";
 import { prisma } from "../lib/prisma";
 import { requireAuth } from "../middleware/auth.middleware";
 import { sendEmail, buildOtpEmail, buildPasswordResetEmail } from "../lib/email";
+import { verifyFirebaseToken } from "../lib/firebase-admin";
 
 function generateNumericOtp(length = 6): string {
   const digits = "0123456789";
@@ -391,6 +392,85 @@ router.post("/password/reset", async (request, response, next) => {
     ]);
 
     return response.json({ ok: true, message: "Password reset successfully. You can now log in." });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+// ─── Google Sign-In ──────────────────────────────────────────────────────────
+const googleSchema = z.object({
+  idToken: z.string().min(1),
+  phone: z.string().optional(), // required only when creating a new account
+});
+
+router.post("/google", async (request, response, next) => {
+  try {
+    const { idToken, phone } = googleSchema.parse(request.body);
+
+    // Verify Firebase ID token
+    const decoded = await verifyFirebaseToken(idToken);
+    const email = decoded.email?.toLowerCase();
+
+    if (!email) {
+      return response.status(400).json({ ok: false, error: "Google account has no email address." });
+    }
+
+    // Find existing user by email
+    let user = await prisma.user.findUnique({ where: { email } });
+
+    if (!user) {
+      // New user — phone is required to satisfy the unique constraint
+      if (!phone) {
+        return response.status(200).json({
+          ok: false,
+          needsPhone: true,
+          email,
+          message: "Please provide your phone number to complete sign-up.",
+        });
+      }
+
+      const nigerianPhone = phone.replace(/\s+/g, "");
+      if (!/^(\+234|0)[789][01]\d{8}$/.test(nigerianPhone)) {
+        return response.status(400).json({ ok: false, error: "Enter a valid Nigerian phone number." });
+      }
+
+      const existingPhone = await prisma.user.findUnique({ where: { phone: nigerianPhone } });
+      if (existingPhone) {
+        return response.status(409).json({ ok: false, error: "This phone number is already registered." });
+      }
+
+      const displayName = decoded.name ?? email.split("@")[0];
+      const [firstName, ...rest] = displayName.split(" ");
+
+      user = await prisma.user.create({
+        data: {
+          email,
+          phone: nigerianPhone,
+          passwordHash: crypto.randomBytes(32).toString("hex"), // unusable — Google users authenticate via Firebase
+          firstName: firstName || "Member",
+          lastName: rest.join(" ") || "User",
+          status: "ACTIVE",
+          profile: { create: { country: "Nigeria" } },
+          preferences: { create: { preferredAgeMin: 24, preferredAgeMax: 40 } },
+          notificationSetting: { create: {} },
+        },
+      });
+    }
+
+    const token = jwt.sign(
+      { sub: user.id, email: user.email, role: user.role },
+      env.JWT_SECRET,
+      { expiresIn: env.JWT_EXPIRES_IN as SignOptions["expiresIn"] },
+    );
+
+    return response.json({
+      ok: true,
+      message: "Login successful",
+      data: {
+        token,
+        user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role },
+      },
+    });
   } catch (error) {
     return next(error);
   }

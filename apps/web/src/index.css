@@ -20,7 +20,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow-x: clip;
   color: #160D3E;
   font-family: "Inter", "Segoe UI", sans-serif;
   background: #FAFAF8;

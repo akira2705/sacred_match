@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import { Filter, Heart, MessageCircleMore, X } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { RevealOnScroll } from "@/components/RevealOnScroll";
+import { Seo } from "@/components/Seo";
+import { SkeletonCard, SkeletonGrid } from "@/components/Skeleton";
 import { SectionHeading } from "@/components/SectionHeading";
 import { blogArticles } from "@/content/contentHubData";
 import { connectionBuckets, conversations, dashboardStats, matchProfiles } from "@/content/matchData";
@@ -40,7 +42,7 @@ export function DashboardPage() {
             <div className="surface-card p-7">
               <img alt="Demo member" className="h-56 w-full rounded-[1.7rem] object-cover" src={matchProfiles[0].photos[0]} />
               <h2 className="mt-6 font-display text-3xl font-semibold text-brand-ink">Demo Member</h2>
-              <p className="mt-2 text-sm text-brand-clay">29 • {draft.personal.state || "Lagos"} • {draft.ethnicity.ethnicGroup || "Yoruba"}</p>
+              <p className="mt-2 text-sm text-brand-clay">29 ï¿½ {draft.personal.state || "Lagos"} ï¿½ {draft.ethnicity.ethnicGroup || "Yoruba"}</p>
               <p className="mt-4 text-sm leading-7 text-brand-forest/80">{draft.personal.bio}</p>
               <div className="mt-6 h-3 rounded-full bg-brand-forest/10"><div className="h-3 rounded-full bg-brand-clay" style={{ width: draft.completed ? "95%" : "78%" }} /></div>
               <p className="mt-3 text-sm font-semibold text-brand-forest">Profile completion: {draft.completed ? "95%" : "78%"}</p>
@@ -75,7 +77,7 @@ export function DashboardPage() {
                           <h3 className="font-semibold text-brand-ink">{match.name}</h3>
                           <span className={`rounded-full px-3 py-1 text-xs font-semibold ${scoreTone(match.score)}`}>{match.score}%</span>
                         </div>
-                        <p className="mt-2 text-sm text-brand-forest/70">{match.age} • {match.location}</p>
+                        <p className="mt-2 text-sm text-brand-forest/70">{match.age} ï¿½ {match.location}</p>
                         <div className="mt-4 flex gap-2 text-sm">
                           <Link className="rounded-full bg-brand-forest px-4 py-2 font-semibold text-white" to={`/matches/${match.id}`}>View</Link>
                           <button className="rounded-full border border-brand-forest/15 px-4 py-2 font-semibold text-brand-forest" type="button">Like</button>
@@ -187,8 +189,8 @@ export function MatchesPage() {
         />
       </section>
 
-      <section className="section-shell sticky top-0 z-20 pt-0">
-        <div className="surface-card border-brand-forest/10 p-5 backdrop-blur-2xl">
+      <section className="sticky top-0 z-20 mx-auto w-full max-w-7xl px-4 py-3 sm:px-6 lg:px-8 bg-brand-cream/95 backdrop-blur-md shadow-sm">
+        <div className="surface-card border-brand-forest/10 p-5">
           <div className="flex items-center gap-2 text-sm font-semibold text-brand-forest"><Filter size={16} /> Filter bar</div>
           <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
             <label className="grid gap-2 text-sm font-semibold text-brand-forest">Age range up to {ageRange}<input type="range" min={18} max={60} value={ageRange} onChange={(e) => setAgeRange(Number(e.target.value))} /></label>
@@ -216,7 +218,7 @@ export function MatchesPage() {
                     <div className="flex items-center justify-between gap-3">
                       <div>
                         <h2 className="font-display text-3xl font-semibold text-brand-ink">{profile.name}</h2>
-                        <p className="text-sm text-brand-forest/70">{profile.age} • {profile.location}</p>
+                        <p className="text-sm text-brand-forest/70">{profile.age} ï¿½ {profile.location}</p>
                       </div>
                       <span className={`rounded-full px-3 py-1 text-xs font-semibold ${scoreTone(profile.score)}`}>{profile.score}/100</span>
                     </div>
@@ -265,7 +267,7 @@ export function MatchProfilePage() {
             <div className="surface-card p-8">
               <p className="eyebrow">Match profile</p>
               <h1 className="mt-6 font-display text-5xl font-semibold text-brand-ink">{profile.name}</h1>
-              <p className="mt-3 text-base text-brand-clay">{profile.age} • {profile.location} • {profile.lastActive}</p>
+              <p className="mt-3 text-base text-brand-clay">{profile.age} ï¿½ {profile.location} ï¿½ {profile.lastActive}</p>
               <div className="mt-5 flex flex-wrap gap-2">{profile.verificationBadges.map((badge) => <span key={badge} className="pill-chip">? {badge}</span>)}</div>
               <div className="mt-8 rounded-[1.7rem] bg-brand-forest/5 p-6">
                 <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-clay">Match score</p>
@@ -275,7 +277,7 @@ export function MatchProfilePage() {
                   <p>Personal: {profile.breakdown.personal}/30</p>
                   <p>Genotype: {profile.breakdown.genotype}/20</p>
                   <p>Engagement: {profile.breakdown.engagement}/10</p>
-                  <p className={`font-semibold ${compatibilityTone(profile.compatibility.tone)}`}>Your genotype: {profile.compatibility.myGenotype} • Their genotype: {profile.compatibility.theirGenotype} • {profile.compatibility.summary}</p>
+                  <p className={`font-semibold ${compatibilityTone(profile.compatibility.tone)}`}>Your genotype: {profile.compatibility.myGenotype} ï¿½ Their genotype: {profile.compatibility.theirGenotype} ï¿½ {profile.compatibility.summary}</p>
                 </div>
               </div>
               <div className="mt-8 flex flex-wrap gap-3">
@@ -317,7 +319,7 @@ export function MatchProfilePage() {
                   <img alt={item.name} className="h-16 w-16 rounded-full object-cover" src={item.photos[0]} />
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold text-brand-ink">{item.name}</p>
-                    <p className="text-sm text-brand-forest/70">{item.location} • {item.score}% match</p>
+                    <p className="text-sm text-brand-forest/70">{item.location} ï¿½ {item.score}% match</p>
                   </div>
                 </Link>
               ))}
@@ -352,7 +354,7 @@ export function ConnectionsPage() {
                 <img alt={item.name} className="h-20 w-20 rounded-[1.4rem] object-cover" src={item.photos[0]} />
                 <div className="min-w-0 flex-1">
                   <p className="font-display text-2xl font-semibold text-brand-ink">{item.name}</p>
-                  <p className="text-sm text-brand-forest/70">{item.age} • {item.location}</p>
+                  <p className="text-sm text-brand-forest/70">{item.age} ï¿½ {item.location}</p>
                   <p className="mt-2 text-sm text-brand-clay capitalize">{tab === "pending" ? "Request sent 2 days ago" : tab === "accepted" ? "Matched 5 days ago" : tab === "rejected" ? "Declined 10 days ago" : "Blocked recently"}</p>
                 </div>
                 <div className="flex flex-wrap gap-3 text-sm font-semibold">

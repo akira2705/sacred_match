@@ -1,3 +1,5 @@
+import { landingPageContent } from "@/content/siteContent";
+
 const baseURL = import.meta.env.VITE_API_URL;
 
 type RequestMethod = "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
@@ -50,7 +52,37 @@ export type LandingPageContent = {
   connectionSteps: string[];
 };
 
-import { landingPageContent } from "@/content/siteContent";
+export type ApiConversation = {
+  id: string;
+  updatedAt: string;
+  participants: Array<{
+    userId: string;
+    user: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      photos: Array<{ url: string }>;
+    };
+  }>;
+  messages: Array<{
+    id: string;
+    body: string;
+    senderId: string;
+    sentAt: string;
+    status: string;
+  }>;
+  _count?: { messages: number };
+};
+
+export type ApiMessage = {
+  id: string;
+  body: string;
+  senderId: string;
+  sentAt: string;
+  deliveredAt?: string | null;
+  readAt?: string | null;
+  status: string;
+};
 
 type OverviewPayload = {
   resources?: Array<{
@@ -79,18 +111,22 @@ function getStoredToken(): string | null {
   return window.localStorage.getItem("sacred-match-token");
 }
 
+function requireBaseURL() {
+  if (!baseURL) {
+    throw new Error("API is not configured. Please set VITE_API_URL.");
+  }
+  return baseURL;
+}
+
 async function apiRequest<TResponse>(
   path: string,
   options?: {
     method?: RequestMethod;
     body?: unknown;
-    auth?: boolean; // default true — include token if available
+    auth?: boolean;
   },
 ): Promise<TResponse> {
-  if (!baseURL) {
-    throw new Error("API URL is not configured");
-  }
-
+  const url = requireBaseURL();
   const includeAuth = options?.auth !== false;
   const token = includeAuth ? getStoredToken() : null;
 
@@ -102,7 +138,7 @@ async function apiRequest<TResponse>(
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${baseURL}${path}`, {
+  const response = await fetch(`${url}${path}`, {
     method: options?.method ?? "GET",
     headers,
     body: options?.body ? JSON.stringify(options.body) : undefined,
@@ -172,13 +208,6 @@ export async function getLandingPageContent(): Promise<LandingPageContent> {
 }
 
 export async function submitRegistrationIntent(payload: RegistrationIntent) {
-  if (!baseURL) {
-    return {
-      message:
-        "Signup flow is wired locally. Connect the API URL to persist registrations.",
-    };
-  }
-
   return apiRequest<{ message: string }>("/auth/register", {
     method: "POST",
     body: payload,
@@ -187,14 +216,6 @@ export async function submitRegistrationIntent(payload: RegistrationIntent) {
 }
 
 export async function loginUser(payload: LoginPayload) {
-  if (!baseURL) {
-    return {
-      message: "Login flow is wired locally. Connect the API URL to authenticate users.",
-      token: "local-development-token",
-      role: null as string | null,
-    };
-  }
-
   const response = await apiRequest<{
     data?: { token?: string; user?: { role?: string } };
     message?: string;
@@ -211,9 +232,59 @@ export async function loginUser(payload: LoginPayload) {
   };
 }
 
+export async function loginWithGoogle(): Promise<{ token: string; role: string | null; email?: string }> {
+  // Dynamically import firebase to avoid breaking builds without firebase config
+  const { signInWithGoogle } = await import("./firebase");
+  const idToken = await signInWithGoogle();
+
+  const response = await apiRequest<{
+    data?: { token?: string; user?: { role?: string; email?: string } };
+    message?: string;
+  }>("/auth/google", {
+    method: "POST",
+    body: { idToken },
+    auth: false,
+  });
+
+  return {
+    token: response.data?.token ?? "",
+    role: response.data?.user?.role ?? null,
+    email: response.data?.user?.email,
+  };
+}
+
 export async function getMe() {
   return apiRequest<{
     ok: boolean;
     data?: { id: string; email: string; firstName: string; lastName: string; role: string };
   }>("/auth/me");
+}
+
+// ─── Messaging ───────────────────────────────────────────────────────────────
+
+export async function getConversations(): Promise<ApiConversation[]> {
+  const response = await apiRequest<{ ok: boolean; data: ApiConversation[] }>(
+    "/messaging/conversations",
+  );
+  return response.data ?? [];
+}
+
+export async function getMessages(conversationId: string, page = 0): Promise<ApiMessage[]> {
+  const response = await apiRequest<{
+    ok: boolean;
+    data: ApiMessage[];
+    meta: { total: number; page: number; limit: number };
+  }>(`/messaging/conversations/${conversationId}/messages?page=${page}`);
+  return response.data ?? [];
+}
+
+export async function sendMessageToConversation(
+  conversationId: string,
+  body: string,
+): Promise<ApiMessage> {
+  const response = await apiRequest<{ ok: boolean; data: ApiMessage }>(
+    `/messaging/conversations/${conversationId}/messages`,
+    { method: "POST", body: { body } },
+  );
+  return response.data;
 }

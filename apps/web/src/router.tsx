@@ -72,11 +72,41 @@ function RootLayout() {
   );
 }
 
+/** Decode JWT payload without verifying signature (verification happens server-side). */
+function decodeJwtPayload(token: string): Record<string, unknown> | null {
+  try {
+    const parts = token.split(".");
+    if (parts.length !== 3) return null;
+    const payload = atob(parts[1].replace(/-/g, "+").replace(/_/g, "/"));
+    return JSON.parse(payload) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+}
+
+/** Returns true only if token looks like a real JWT (3-part, non-expired, has sub). */
+function isValidJwt(token: string | null): boolean {
+  if (!token) return false;
+  const payload = decodeJwtPayload(token);
+  if (!payload || !payload.sub) return false;
+  // Check expiry
+  if (typeof payload.exp === "number" && payload.exp * 1000 < Date.now()) return false;
+  return true;
+}
+
+function getTokenRole(token: string | null): string | null {
+  if (!token) return null;
+  const payload = decodeJwtPayload(token);
+  return typeof payload?.role === "string" ? payload.role : null;
+}
+
 function RequireAuth({ children }: { children: ReactElement }) {
   const location = useLocation();
-  const hasToken = typeof window !== "undefined" && Boolean(window.localStorage.getItem("sacred-match-token"));
+  const token = typeof window !== "undefined" ? window.localStorage.getItem("sacred-match-token") : null;
 
-  if (!hasToken) {
+  if (!isValidJwt(token)) {
+    // Clear any stale/invalid token
+    if (typeof window !== "undefined") window.localStorage.removeItem("sacred-match-token");
     return <Navigate replace state={{ from: location.pathname }} to="/login" />;
   }
 
@@ -85,12 +115,15 @@ function RequireAuth({ children }: { children: ReactElement }) {
 
 function RequireAdmin({ children }: { children: ReactElement }) {
   const location = useLocation();
-  const hasToken = typeof window !== "undefined" && Boolean(window.localStorage.getItem("sacred-match-token"));
-  const isAdmin = typeof window !== "undefined" && window.localStorage.getItem("sacred-match-role") === "admin";
+  const token = typeof window !== "undefined" ? window.localStorage.getItem("sacred-match-token") : null;
 
-  if (!hasToken) {
+  if (!isValidJwt(token)) {
+    if (typeof window !== "undefined") window.localStorage.removeItem("sacred-match-token");
     return <Navigate replace state={{ from: location.pathname }} to="/login" />;
   }
+
+  const role = getTokenRole(token);
+  const isAdmin = role === "ADMIN" || role === "admin";
 
   if (!isAdmin) {
     return <Navigate replace to="/dashboard" />;

@@ -1,26 +1,16 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { RevealOnScroll } from "@/components/RevealOnScroll";
 import { SectionHeading } from "@/components/SectionHeading";
-import { loginUser } from "@/lib/api";
+import { loginUser, loginWithGoogle } from "@/lib/api";
 import {
   forgetRememberedLogin,
   loadRememberedLogin,
   rememberLogin,
 } from "@/lib/profileStorage";
-
-const demoCredentials = {
-  email: "demo@sacred-match.ng",
-  password: "SacredMatch123!",
-};
-
-const adminCredentials = {
-  email: "admin@sacred-match.ng",
-  password: "Admin@Sacred1!",
-};
 
 const MAX_ATTEMPTS = 5;
 const LOCKOUT_MINUTES = 15;
@@ -41,64 +31,35 @@ function canUseStorage() {
 }
 
 function getAttemptCount() {
-  if (!canUseStorage()) {
-    return 0;
-  }
-
+  if (!canUseStorage()) return 0;
   return Number(window.localStorage.getItem(ATTEMPTS_KEY) ?? 0);
 }
 
 function setAttemptCount(count: number) {
-  if (!canUseStorage()) {
-    return;
-  }
-
+  if (!canUseStorage()) return;
   window.localStorage.setItem(ATTEMPTS_KEY, String(count));
 }
 
 function getLockoutUntil() {
-  if (!canUseStorage()) {
-    return 0;
-  }
-
+  if (!canUseStorage()) return 0;
   return Number(window.localStorage.getItem(LOCKOUT_KEY) ?? 0);
 }
 
 function setLockoutUntil(value: number) {
-  if (!canUseStorage()) {
-    return;
-  }
-
+  if (!canUseStorage()) return;
   window.localStorage.setItem(LOCKOUT_KEY, String(value));
 }
 
 function clearThrottleState() {
-  if (!canUseStorage()) {
-    return;
-  }
-
+  if (!canUseStorage()) return;
   window.localStorage.removeItem(ATTEMPTS_KEY);
   window.localStorage.removeItem(LOCKOUT_KEY);
 }
 
 function formatRemaining(seconds: number) {
-  const minutes = Math.floor(seconds / 60)
-    .toString()
-    .padStart(2, "0");
+  const minutes = Math.floor(seconds / 60).toString().padStart(2, "0");
   const remainder = (seconds % 60).toString().padStart(2, "0");
   return `${minutes}:${remainder}`;
-}
-
-function isNetworkFailure(error: unknown) {
-  return error instanceof Error && error.message === "Network Error";
-}
-
-function normalizeLoginError(error: unknown) {
-  if (isNetworkFailure(error)) {
-    return "Unable to reach the API. Start the API and database, then try again.";
-  }
-
-  return error instanceof Error ? error.message : "Login failed";
 }
 
 export function LoginPage() {
@@ -107,14 +68,15 @@ export function LoginPage() {
   const rememberedEmail = loadRememberedLogin();
   const [message, setMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [lockedUntil, setLockedUntilState] = useState<number>(() => getLockoutUntil());
   const [clock, setClock] = useState(() => Date.now());
   const redirectTo =
     ((location.state as { from?: string } | null)?.from as string | undefined) ?? "/dashboard";
+
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors, isSubmitting },
   } = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
@@ -129,9 +91,7 @@ export function LoginPage() {
   const remainingSeconds = isLocked ? Math.max(Math.ceil((lockedUntil - clock) / 1000), 0) : 0;
 
   useEffect(() => {
-    if (!lockedUntil) {
-      return;
-    }
+    if (!lockedUntil) return;
 
     if (lockedUntil <= Date.now()) {
       clearThrottleState();
@@ -139,10 +99,7 @@ export function LoginPage() {
       return;
     }
 
-    const timer = window.setInterval(() => {
-      setClock(Date.now());
-    }, 1000);
-
+    const timer = window.setInterval(() => setClock(Date.now()), 1000);
     return () => window.clearInterval(timer);
   }, [lockedUntil]);
 
@@ -154,6 +111,24 @@ export function LoginPage() {
     }
   }, [clock, lockedUntil]);
 
+  function applyLogin(token: string, role: string | null, email: string, remember: boolean) {
+    clearThrottleState();
+    setLockedUntilState(0);
+    if (remember) {
+      rememberLogin(email);
+    } else {
+      forgetRememberedLogin();
+    }
+    window.localStorage.setItem("sacred-match-token", token);
+    const isAdmin = role === "ADMIN" || role === "admin";
+    if (isAdmin) {
+      window.localStorage.setItem("sacred-match-role", "admin");
+    } else {
+      window.localStorage.removeItem("sacred-match-role");
+    }
+    navigate(isAdmin ? "/admin" : redirectTo);
+  }
+
   async function onSubmit(values: LoginValues) {
     setMessage(null);
     setErrorMessage(null);
@@ -163,69 +138,12 @@ export function LoginPage() {
       return;
     }
 
-    const isAdminLogin = values.email === adminCredentials.email && values.password === adminCredentials.password;
-    const isDemoLogin = values.email === demoCredentials.email && values.password === demoCredentials.password;
-
-    function applyOfflineLogin(asAdmin: boolean) {
-      clearThrottleState();
-      setLockedUntilState(0);
-      if (values.rememberMe) {
-        rememberLogin(values.email);
-      } else {
-        forgetRememberedLogin();
-      }
-      window.localStorage.setItem(
-        "sacred-match-token",
-        asAdmin ? "admin-development-token" : "local-development-token",
-      );
-      if (asAdmin) {
-        window.localStorage.setItem("sacred-match-role", "admin");
-      } else {
-        window.localStorage.removeItem("sacred-match-role");
-      }
-      navigate(asAdmin ? "/admin" : redirectTo);
-    }
-
     try {
       const response = await loginUser({ email: values.email, password: values.password });
-
-      clearThrottleState();
-      setLockedUntilState(0);
-
-      if (values.rememberMe) {
-        rememberLogin(values.email);
-      } else {
-        forgetRememberedLogin();
-      }
-
-      window.localStorage.setItem(
-        "sacred-match-token",
-        response.token || (isAdminLogin ? "admin-development-token" : "local-development-token"),
-      );
-
-      // Use role from server response; fall back to credential-based check for offline mode
-      const serverRole = response.role ?? (isAdminLogin ? "ADMIN" : null);
-      const isAdmin = serverRole === "ADMIN" || serverRole === "admin" || isAdminLogin;
-      if (isAdmin) {
-        window.localStorage.setItem("sacred-match-role", "admin");
-      } else {
-        window.localStorage.removeItem("sacred-match-role");
-      }
       setMessage(response.message);
-      navigate(isAdmin ? "/admin" : redirectTo);
+      applyLogin(response.token, response.role, values.email, values.rememberMe);
     } catch (error) {
-      const normalizedError = normalizeLoginError(error);
-
-      if (isNetworkFailure(error)) {
-        // API unreachable (Vercel/no backend) — allow offline login for demo & admin accounts
-        if (isAdminLogin || isDemoLogin) {
-          applyOfflineLogin(isAdminLogin);
-          return;
-        }
-        setErrorMessage(normalizedError);
-        return;
-      }
-
+      const message = error instanceof Error ? error.message : "Login failed";
       const nextAttempts = getAttemptCount() + 1;
 
       if (nextAttempts >= MAX_ATTEMPTS) {
@@ -233,30 +151,29 @@ export function LoginPage() {
         setLockoutUntil(nextLockout);
         setLockedUntilState(nextLockout);
         setAttemptCount(0);
-        setErrorMessage(
-          `Too many failed attempts. Login is locked for ${LOCKOUT_MINUTES} minutes.`,
-        );
+        setErrorMessage(`Too many failed attempts. Login is locked for ${LOCKOUT_MINUTES} minutes.`);
         return;
       }
 
       setAttemptCount(nextAttempts);
       const attemptsRemaining = MAX_ATTEMPTS - nextAttempts;
       setErrorMessage(
-        `${normalizedError}. ${attemptsRemaining} attempt${attemptsRemaining === 1 ? "" : "s"} remaining before a ${LOCKOUT_MINUTES}-minute lockout.`,
+        `${message}. ${attemptsRemaining} attempt${attemptsRemaining === 1 ? "" : "s"} remaining before a ${LOCKOUT_MINUTES}-minute lockout.`,
       );
     }
   }
 
-  function fillDemoCredentials() {
-    setValue("email", demoCredentials.email, { shouldDirty: true, shouldTouch: true });
-    setValue("password", demoCredentials.password, { shouldDirty: true, shouldTouch: true });
-    setValue("rememberMe", true, { shouldDirty: true, shouldTouch: true });
-  }
-
-  function fillAdminCredentials() {
-    setValue("email", adminCredentials.email, { shouldDirty: true, shouldTouch: true });
-    setValue("password", adminCredentials.password, { shouldDirty: true, shouldTouch: true });
-    setValue("rememberMe", false, { shouldDirty: true, shouldTouch: true });
+  async function handleGoogleSignIn() {
+    setGoogleLoading(true);
+    setErrorMessage(null);
+    try {
+      const response = await loginWithGoogle();
+      applyLogin(response.token, response.role, response.email ?? "", true);
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Google sign-in failed");
+    } finally {
+      setGoogleLoading(false);
+    }
   }
 
   return (
@@ -266,129 +183,105 @@ export function LoginPage() {
           <SectionHeading
             eyebrow="Log in"
             title="Return to your dashboard, matches, and conversations"
-            description="Sign in with email and password, keep your login remembered if you want, and stay inside the platform's protected connection flow."
+            description="Sign in with your email and password, or continue with Google."
           />
         </RevealOnScroll>
       </section>
 
       <section className="section-shell pt-0">
-        <div className="mx-auto max-w-5xl overflow-hidden rounded-[2.2rem] border border-white/80 bg-white shadow-halo">
-          <div className="grid gap-0 lg:grid-cols-[1fr_0.92fr]">
-            <RevealOnScroll className="p-8 sm:p-10">
-              <form className="grid gap-5" onSubmit={handleSubmit(onSubmit)}>
-                <label className="grid gap-2">
-                  <span className="text-sm font-semibold text-brand-forest">Email address</span>
-                  <input
-                    autoComplete="email"
-                    className="input-shell bg-white/90"
-                    placeholder="name@example.com"
-                    {...register("email")}
-                  />
-                  {errors.email ? (
-                    <span className="text-sm text-rose-600">{errors.email.message}</span>
-                  ) : null}
+        <div className="mx-auto max-w-xl overflow-hidden rounded-[2.2rem] border border-white/80 bg-white shadow-halo">
+          <RevealOnScroll className="p-8 sm:p-10">
+            <form className="grid gap-5" onSubmit={handleSubmit(onSubmit)}>
+              <label className="grid gap-2">
+                <span className="text-sm font-semibold text-brand-forest">Email address</span>
+                <input
+                  autoComplete="email"
+                  className="input-shell bg-white/90"
+                  placeholder="name@example.com"
+                  {...register("email")}
+                />
+                {errors.email ? (
+                  <span className="text-sm text-rose-600">{errors.email.message}</span>
+                ) : null}
+              </label>
+
+              <label className="grid gap-2">
+                <span className="text-sm font-semibold text-brand-forest">Password</span>
+                <input
+                  autoComplete="current-password"
+                  className="input-shell bg-white/90"
+                  type="password"
+                  placeholder="Your password"
+                  {...register("password")}
+                />
+                {errors.password ? (
+                  <span className="text-sm text-rose-600">{errors.password.message}</span>
+                ) : null}
+              </label>
+
+              <div className="flex flex-col gap-3 rounded-[1.5rem] border border-brand-forest/10 bg-brand-forest/5 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+                <label className="inline-flex items-center gap-3 text-sm font-medium text-brand-forest">
+                  <input type="checkbox" {...register("rememberMe")} />
+                  Remember me on this device
                 </label>
+                <Link className="text-sm font-semibold text-brand-clay" to="/forgot-password">
+                  Forgot password?
+                </Link>
+              </div>
 
-                <label className="grid gap-2">
-                  <span className="text-sm font-semibold text-brand-forest">Password</span>
-                  <input
-                    autoComplete="current-password"
-                    className="input-shell bg-white/90"
-                    type="password"
-                    placeholder="Your password"
-                    {...register("password")}
-                  />
-                  {errors.password ? (
-                    <span className="text-sm text-rose-600">{errors.password.message}</span>
-                  ) : null}
-                </label>
-
-                <div className="flex flex-col gap-3 rounded-[1.5rem] border border-brand-forest/10 bg-brand-forest/5 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-                  <label className="inline-flex items-center gap-3 text-sm font-medium text-brand-forest">
-                    <input type="checkbox" {...register("rememberMe")} />
-                    Remember me on this device
-                  </label>
-                  <Link className="text-sm font-semibold text-brand-clay" to="/forgot-password">
-                    Forgot password?
-                  </Link>
+              {isLocked ? (
+                <div className="rounded-[1.5rem] border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-900">
+                  Login is temporarily locked. Try again in {formatRemaining(remainingSeconds)}.
                 </div>
-
-                {isLocked ? (
-                  <div className="rounded-[1.5rem] border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-900">
-                    Login is temporarily locked. Try again in {formatRemaining(remainingSeconds)}.
-                  </div>
-                ) : null}
-                {message ? (
-                  <div className="rounded-[1.5rem] border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-900">
-                    {message}
-                  </div>
-                ) : null}
-                {errorMessage ? (
-                  <div className="rounded-[1.5rem] border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-900">
-                    {errorMessage}
-                  </div>
-                ) : null}
-
-                <div className="flex flex-col gap-3 sm:flex-row">
-                  <button
-                    className="rounded-full bg-brand-forest px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-emerald disabled:cursor-not-allowed disabled:opacity-70"
-                    disabled={isSubmitting || isLocked}
-                    type="submit"
-                  >
-                    {isSubmitting ? "Signing in..." : "Log in"}
-                  </button>
-                  <button
-                    className="rounded-full border border-brand-forest/15 bg-white px-6 py-3 text-sm font-semibold text-brand-forest transition hover:bg-brand-cream"
-                    onClick={fillDemoCredentials}
-                    type="button"
-                  >
-                    Use demo credentials
-                  </button>
-                  <button
-                    className="rounded-full border border-brand-clay/30 bg-brand-clay/10 px-6 py-3 text-sm font-semibold text-brand-clay transition hover:bg-brand-clay/15"
-                    onClick={fillAdminCredentials}
-                    type="button"
-                  >
-                    Use admin credentials
-                  </button>
+              ) : null}
+              {message ? (
+                <div className="rounded-[1.5rem] border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-900">
+                  {message}
                 </div>
-              </form>
-            </RevealOnScroll>
+              ) : null}
+              {errorMessage ? (
+                <div className="rounded-[1.5rem] border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-900">
+                  {errorMessage}
+                </div>
+              ) : null}
 
-            <RevealOnScroll className="bg-brand-ink p-8 text-brand-cream sm:p-10" delay={120}>
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-gold">
-                Test credentials
+              <button
+                className="rounded-full bg-brand-forest px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-emerald disabled:cursor-not-allowed disabled:opacity-70"
+                disabled={isSubmitting || isLocked}
+                type="submit"
+              >
+                {isSubmitting ? "Signing in..." : "Log in"}
+              </button>
+
+              <div className="relative flex items-center gap-3">
+                <div className="h-px flex-1 bg-brand-forest/10" />
+                <span className="text-xs text-brand-forest/50">or</span>
+                <div className="h-px flex-1 bg-brand-forest/10" />
+              </div>
+
+              <button
+                className="flex w-full items-center justify-center gap-3 rounded-full border border-brand-forest/15 bg-white px-6 py-3 text-sm font-semibold text-brand-forest transition hover:bg-brand-cream disabled:cursor-not-allowed disabled:opacity-70"
+                disabled={googleLoading || isLocked}
+                onClick={handleGoogleSignIn}
+                type="button"
+              >
+                <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+                {googleLoading ? "Signing in..." : "Continue with Google"}
+              </button>
+
+              <p className="text-center text-sm text-brand-forest/60">
+                Don&apos;t have an account?{" "}
+                <Link className="font-semibold text-brand-clay" to="/signup">
+                  Create one
+                </Link>
               </p>
-              <h2 className="mt-4 font-display text-3xl font-semibold text-white">
-                Seeded accounts for a quick walkthrough
-              </h2>
-
-              <div className="mt-6 rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold">
-                  Member account
-                </p>
-                <p className="mt-3 text-sm text-brand-cream/60">Email</p>
-                <p className="font-semibold text-white">{demoCredentials.email}</p>
-                <p className="mt-3 text-sm text-brand-cream/60">Password</p>
-                <p className="font-semibold text-white">{demoCredentials.password}</p>
-              </div>
-
-              <div className="mt-4 rounded-[1.5rem] border border-brand-clay/25 bg-brand-clay/10 p-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-clay">
-                  Admin account
-                </p>
-                <p className="mt-3 text-sm text-brand-cream/60">Email</p>
-                <p className="font-semibold text-white">{adminCredentials.email}</p>
-                <p className="mt-3 text-sm text-brand-cream/60">Password</p>
-                <p className="font-semibold text-white">{adminCredentials.password}</p>
-              </div>
-
-              <div className="mt-5 grid gap-3 text-sm leading-7 text-brand-cream/65">
-                <p>Five failed attempts trigger a 15-minute lockout.</p>
-                <p>Admin login redirects directly to <code className="rounded bg-white/10 px-2 py-0.5">/admin</code>.</p>
-              </div>
-            </RevealOnScroll>
-          </div>
+            </form>
+          </RevealOnScroll>
         </div>
       </section>
     </div>
