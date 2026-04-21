@@ -153,8 +153,8 @@ export function HomePage() {
             </div>
           </div>
 
-          {/* Right / Below (mobile): hero image */}
-          <div className="relative z-10 flex items-end justify-center lg:items-end lg:justify-center">
+          {/* Right / Below (mobile): hero image — face overflows above section on desktop */}
+          <div className="relative z-10 flex items-end justify-center lg:items-end lg:justify-center lg:-mt-44">
             <div
               style={{ animation: "fadeIn 1.1s cubic-bezier(0.22,1,0.36,1) 0.3s both" }}
             >
