@@ -103,6 +103,9 @@ enum VerificationType {
   GOVERNMENT_ID
   PHOTO
   GENOTYPE
+  QUESTIONNAIRE
+  INTENT
+  LIVENESS
 }
 
 enum VisibilityLevel {
@@ -141,6 +144,8 @@ model User {
   reportsAgainst              SafetyReport[]           @relation("ReportsAgainst")
   notificationSetting         NotificationSetting?
   auditLogs                   AuditLog[]
+  otpTokens                   OtpToken[]
+  passwordResetTokens         PasswordResetToken[]
 }
 
 model UserProfile {
@@ -455,4 +460,44 @@ model AuditLog {
   metadata    Json?
   createdAt   DateTime @default(now())
   user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model IntakeSubmission {
+  id          String   @id @default(cuid())
+  firstName   String
+  lastName    String
+  email       String
+  phone       String?
+  state       String?
+  gender      String?
+  ageRange    String?
+  intent      String?
+  genotypeAwareness Boolean @default(false)
+  ipAddress   String?
+  referrer    String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+}
+
+model OtpToken {
+  id          String   @id @default(cuid())
+  userId      String
+  channel     String   // "email" | "sms"
+  purpose     String   // "verification" | "login"
+  otpHash     String
+  expiresAt   DateTime
+  usedAt      DateTime?
+  attempts    Int      @default(0)
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PasswordResetToken {
+  id          String   @id @default(cuid())
+  userId      String
+  tokenHash   String   @unique
+  expiresAt   DateTime
+  usedAt      DateTime?
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

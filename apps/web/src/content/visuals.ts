@@ -1,7 +1,7 @@
 export const weddingImages = [
   {
-    src: "/hero-couple.png",
-    alt: "Elegant Nigerian bride and groom on their wedding day",
+    src: "https://images.pexels.com/photos/7275385/pexels-photo-7275385.jpeg?auto=compress&cs=tinysrgb&w=700&h=900&fit=crop",
+    alt: "Elegant Nigerian woman in traditional attire ready for marriage",
     caption: "Your success story starts here",
   },
   {

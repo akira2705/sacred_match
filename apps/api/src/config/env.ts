@@ -10,7 +10,10 @@ const envSchema = z.object({
   CORS_ORIGIN: z.string().default("http://localhost:3000"),
   REDIS_URL: z.string().default("redis://localhost:6379"),
   JWT_SECRET: z.string().min(12, "JWT_SECRET must be at least 12 characters"),
-  JWT_EXPIRES_IN: z.string().default("7d")
+  JWT_EXPIRES_IN: z.string().default("7d"),
+  // Email (optional — logs to console if not set)
+  RESEND_API_KEY: z.string().optional(),
+  EMAIL_FROM: z.string().optional(),
 });
 
 export const env = envSchema.parse(process.env);

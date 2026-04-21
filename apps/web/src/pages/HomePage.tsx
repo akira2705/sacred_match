@@ -55,17 +55,17 @@ const personas = [
   {
     title: "Faith Driven Professionals",
     tagline: "You want values, not vibes",
-    image: { src: "https://images.pexels.com/photos/31563146/pexels-photo-31563146.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop", alt: "Nigerian couple in traditional attire smiling warmly" },
+    image: { src: "https://images.pexels.com/photos/3770254/pexels-photo-3770254.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop", alt: "Confident Nigerian professional woman in traditional attire" },
   },
   {
     title: "Mature & Intentional Singles",
     tagline: "You are ready for something real again",
-    image: { src: "https://images.pexels.com/photos/32223290/pexels-photo-32223290.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop", alt: "Couple in traditional Nigerian attire holding hands intimately" },
+    image: { src: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop", alt: "Mature African professional man with a warm smile" },
   },
   {
     title: "Diaspora Africans",
     tagline: "You want culture + compatibility",
-    image: { src: "https://images.pexels.com/photos/19068542/pexels-photo-19068542.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop", alt: "Elegant African couple portrait in formal attire" },
+    image: { src: "https://images.pexels.com/photos/3771836/pexels-photo-3771836.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop", alt: "Elegant African woman in contemporary attire" },
   },
 ];
 
@@ -99,20 +99,8 @@ export function HomePage() {
 
           {/* Left copy */}
           <div className="relative z-10 flex flex-col justify-center self-center py-10">
-            {/* Trust pills */}
-            <div className="flex flex-wrap gap-3">
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm">
-                <Heart size={13} className="text-rose-400" fill="currentColor" />
-                Real Intentions
-              </span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-brand-clay/35 bg-brand-clay/15 px-4 py-2 text-sm font-medium text-brand-gold backdrop-blur-sm">
-                <CheckCircle2 size={13} />
-                Verified Platform
-              </span>
-            </div>
-
             {/* Headline */}
-            <h1 className="mt-7 font-display text-5xl font-bold leading-[1.08] tracking-tight text-white sm:text-6xl xl:text-[4.5rem]">
+            <h1 className="font-display text-5xl font-bold leading-[1.08] tracking-tight text-white sm:text-6xl xl:text-[4.5rem]" style={{ paddingTop: "2.5rem" }}>
               Find a{" "}
               <span style={goldStyle}>Life Partner,</span>
               <br />
@@ -179,7 +167,7 @@ export function HomePage() {
       {/* ══════════════════════════════════════════════════════════════════
           PROBLEM — white / cream
       ══════════════════════════════════════════════════════════════════ */}
-      <section className="bg-white py-10 sm:py-14">
+      <section className="bg-white py-8 sm:py-10">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <RevealOnScroll>
             <div className="flex items-center justify-center gap-4">
@@ -191,10 +179,10 @@ export function HomePage() {
             </div>
           </RevealOnScroll>
 
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {problemPoints.map(({ label, icon: Icon }, i) => (
               <RevealOnScroll key={label} delay={i * 70}>
-                <div className="flex items-center gap-4 rounded-2xl border border-brand-forest/8 bg-brand-cream px-5 py-4 transition duration-300 hover:-translate-y-1 hover:shadow-[0_8px_28px_rgba(74,47,173,0.09)]">
+                <div className="flex items-center gap-4 rounded-2xl border border-brand-forest/20 bg-brand-cream px-5 py-4 transition duration-300 hover:-translate-y-1 hover:shadow-[0_8px_28px_rgba(74,47,173,0.09)]">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-forest/8">
                     <Icon size={18} className="text-brand-forest" />
                   </div>
@@ -215,7 +203,7 @@ export function HomePage() {
       {/* ══════════════════════════════════════════════════════════════════
           HOW IT WORKS — mottled purple
       ══════════════════════════════════════════════════════════════════ */}
-      <section className={`${styles.purpleSection} py-10 sm:py-14`}>
+      <section className={`${styles.purpleSection} py-8 sm:py-10`}>
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <RevealOnScroll>
             <div className="flex items-center justify-center gap-4">
@@ -227,10 +215,10 @@ export function HomePage() {
             </div>
           </RevealOnScroll>
 
-          <div className="mt-14 grid gap-6 md:grid-cols-3">
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
             {howItWorksSteps.map((step, i) => (
               <RevealOnScroll key={step.number} delay={i * 100}>
-                <article className="group flex flex-col gap-5 rounded-[2rem] border border-white/10 bg-white/8 p-8 backdrop-blur transition duration-400 hover:-translate-y-2 hover:bg-white/14 hover:shadow-[0_20px_60px_rgba(0,0,0,0.25)]">
+                <article className="group flex flex-col gap-5 rounded-[2rem] border border-white/20 bg-white/8 p-8 backdrop-blur transition duration-400 hover:-translate-y-2 hover:bg-white/14 hover:shadow-[0_20px_60px_rgba(0,0,0,0.25)]">
                   <div className="flex items-center gap-4">
                     <div className={styles.stepNumber}>{step.number}.</div>
                     <h3 className="font-display text-xl font-bold text-white">{step.title}</h3>
@@ -246,7 +234,7 @@ export function HomePage() {
       {/* ══════════════════════════════════════════════════════════════════
           TRUST — white
       ══════════════════════════════════════════════════════════════════ */}
-      <section className="bg-white py-10 sm:py-14">
+      <section className="bg-white py-8 sm:py-10">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <RevealOnScroll>
             <div className="flex items-center justify-center gap-4">
@@ -259,10 +247,10 @@ export function HomePage() {
             </div>
           </RevealOnScroll>
 
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {trustFeatures.map(({ icon: Icon, label }, i) => (
               <RevealOnScroll key={label} delay={i * 65}>
-                <div className="flex items-center gap-4 rounded-2xl border border-brand-forest/8 bg-brand-cream px-5 py-4 transition duration-300 hover:-translate-y-1 hover:border-brand-moss/18 hover:shadow-[0_8px_28px_rgba(74,47,173,0.09)]">
+                <div className="flex items-center gap-4 rounded-2xl border border-brand-forest/20 bg-brand-cream px-5 py-4 transition duration-300 hover:-translate-y-1 hover:border-brand-moss/18 hover:shadow-[0_8px_28px_rgba(74,47,173,0.09)]">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-forest/10">
                     <Icon size={16} className="text-brand-forest" />
                   </div>
@@ -277,7 +265,7 @@ export function HomePage() {
       {/* ══════════════════════════════════════════════════════════════════
           GENOTYPE / DNA — light lavender tint
       ══════════════════════════════════════════════════════════════════ */}
-      <section className={`${styles.dnaSection} py-10 sm:py-14`}>
+      <section className={`${styles.dnaSection} py-8 sm:py-10`}>
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             {/* Left */}
@@ -304,7 +292,7 @@ export function HomePage() {
                   { label: "AS", desc: "Healthy carrier — awareness matters" },
                   { label: "SS", desc: "Lives with sickle cell — careful planning needed" },
                 ].map((item) => (
-                  <div key={item.label} className="flex items-start gap-4 rounded-2xl border border-brand-forest/8 bg-white px-5 py-4 shadow-[0_2px_12px_rgba(74,47,173,0.05)]">
+                  <div key={item.label} className="flex items-start gap-4 rounded-2xl border border-brand-forest/20 bg-white px-5 py-4 shadow-[0_2px_12px_rgba(74,47,173,0.05)]">
                     <span className="mt-0.5 rounded-lg bg-brand-forest px-2.5 py-1 text-xs font-bold text-white">
                       {item.label}
                     </span>
@@ -324,7 +312,7 @@ export function HomePage() {
 
             {/* Right: compatibility grid */}
             <RevealOnScroll delay={120}>
-              <div className="rounded-[2rem] border border-brand-forest/10 bg-white p-8 shadow-[0_12px_48px_rgba(74,47,173,0.10)]">
+              <div className="rounded-[2rem] border border-brand-forest/25 bg-white p-8 shadow-[0_12px_48px_rgba(74,47,173,0.10)]">
                 <h3 className="font-display text-xl font-bold text-brand-ink">
                   Compatibility at a Glance
                 </h3>
@@ -344,7 +332,7 @@ export function HomePage() {
                   ))}
                 </div>
 
-                <div className="mt-6 rounded-2xl border border-brand-forest/8 bg-brand-cream px-5 py-4">
+                <div className="mt-6 rounded-2xl border border-brand-forest/20 bg-brand-cream px-5 py-4">
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-forest/50">
                     Privacy control
                   </p>
@@ -362,7 +350,7 @@ export function HomePage() {
       {/* ══════════════════════════════════════════════════════════════════
           FOUNDING MEMBER CTA — mottled purple
       ══════════════════════════════════════════════════════════════════ */}
-      <section className={`${styles.purpleSection} py-10 sm:py-14`}>
+      <section className={`${styles.purpleSection} py-8 sm:py-10`}>
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <RevealOnScroll>
             <div className="flex items-center justify-center gap-4">
@@ -377,7 +365,7 @@ export function HomePage() {
           </RevealOnScroll>
 
           {/* Persona cards */}
-          <div className="mt-12 grid gap-5 sm:grid-cols-3">
+          <div className="mt-8 grid gap-4 sm:grid-cols-3">
             {personas.map((persona, i) => (
               <RevealOnScroll key={persona.title} delay={i * 100}>
                 <article className="group overflow-hidden rounded-[2rem] shadow-[0_16px_50px_rgba(0,0,0,0.25)] transition duration-500 hover:-translate-y-2 hover:shadow-[0_28px_70px_rgba(0,0,0,0.38)]">
