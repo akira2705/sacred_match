@@ -104,7 +104,7 @@ export const landingPageContent: LandingPageContent = {
       names: "Ayo (Yoruba) & Nkechi (Igbo)",
       route: "Matched through shared values and openness",
       story:
-        "We needed more than age and city filters. Sacred Match surfaced values, genotype compatibility, and relationship intent early enough to take the connection seriously.",
+        "We needed more than age and city filters. Spousia surfaced values, genotype compatibility, and relationship intent early enough to take the connection seriously.",
       timeline: "Exclusive in 6 weeks",
       tag: "Cross-ethnic success",
     },
@@ -150,9 +150,9 @@ export const landingPageContent: LandingPageContent = {
   ],
   faqs: [
     {
-      question: "What makes Sacred Match different from regular dating apps?",
+      question: "What makes Spousia different from regular dating apps?",
       answer:
-        "Sacred Match is designed for marriage-minded people. Matching, profile data, verification, and genotype controls are all optimized for serious commitment instead of casual discovery.",
+        "Spousia is designed for marriage-minded people. Matching, profile data, verification, and genotype controls are all optimized for serious commitment instead of casual discovery.",
     },
     {
       question: "Is genotype information mandatory?",

@@ -29,7 +29,7 @@ export function Footer() {
       <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:px-8">
         <div>
           <span className="eyebrow border-white/10 bg-white/5 text-brand-gold">
-            Sacred Match
+            Spousia
           </span>
           <h3 className="mt-6 font-display text-3xl font-semibold tracking-tight">
             Compatibility, clarity, and safe conversation for marriage-minded Nigerians.
@@ -70,7 +70,7 @@ export function Footer() {
 
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-6 text-sm text-brand-cream/60 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
-          <p>© 2026 Sacred Match Nigeria. All rights reserved.</p>
+          <p>© 2026 Spousia Nigeria. All rights reserved.</p>
           <p>Built for profile quality, compatibility, messaging, moderation, and trust.</p>
         </div>
       </div>

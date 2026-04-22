@@ -1,6 +1,7 @@
 ﻿import { ShieldCheck, Sparkles, UsersRound } from "lucide-react";
 import { Link } from "react-router-dom";
 import { RevealOnScroll } from "@/components/RevealOnScroll";
+import { Seo } from "@/components/Seo";
 import { SectionHeading } from "@/components/SectionHeading";
 import { landingPageContent } from "@/content/siteContent";
 
@@ -8,7 +9,7 @@ const pillars = [
   {
     icon: Sparkles,
     title: "Culture with dignity",
-    body: "Sacred Match is built to respect ethnic identity, faith, values, and long-term intent instead of reducing compatibility to a swipe score.",
+    body: "Spousia is built to respect ethnic identity, faith, values, and long-term intent instead of reducing compatibility to a swipe score.",
   },
   {
     icon: UsersRound,
@@ -41,7 +42,7 @@ const teamMembers = [
 ];
 
 const storyPoints = [
-  "Sacred Match was designed around a simple gap: many people want marriage-minded discovery, but most products optimize for casual attention instead of serious compatibility.",
+  "Spousia was designed around a simple gap: many people want marriage-minded discovery, but most products optimize for casual attention instead of serious compatibility.",
   "The platform responds to that gap by making culture, faith, location, verification, and genotype visibility first-class product decisions rather than side notes.",
   "That keeps the experience focused on helping the right people find each other and decide whether a connection is worth pursuing.",
 ];
@@ -49,11 +50,16 @@ const storyPoints = [
 export function AboutPage() {
   return (
     <div>
+      <Seo
+        title="About Us"
+        description="Learn about Spousia — Nigeria's marriage-minded platform built around culture, genotype awareness, identity verification, and intentional connections."
+        canonical="https://spousia.ng/about"
+      />
       <section className="section-shell pb-10 pt-16">
         <SectionHeading
-          eyebrow="About Sacred Match"
+          eyebrow="About Spousia"
           title="A marriage platform built to help the right people find each other"
-          description="Sacred Match exists to help serious Nigerians discover compatible partners with clarity around values, culture, genotype, and intent."
+          description="Spousia exists to help serious Nigerians discover compatible partners with clarity around values, culture, genotype, and intent."
         />
       </section>
 

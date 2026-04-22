@@ -89,7 +89,7 @@ export function GenotypeChecker({ compact = false }: GenotypeCheckerProps) {
                 Privacy controls belong in the product, not in policy text alone.
               </p>
               <p className="mt-2 leading-6 text-brand-cream/75">
-                Sacred Match supports genotype visibility preferences so users can
+                Spousia supports genotype visibility preferences so users can
                 choose when to disclose, to whom, and under what relationship stage.
               </p>
             </div>

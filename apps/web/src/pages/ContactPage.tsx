@@ -6,7 +6,7 @@ const contactChannels = [
   {
     icon: Mail,
     title: "General enquiries",
-    detail: "support@sacred-match.ng",
+    detail: "support@spousia.ng",
     note: "Product, support, and early-access requests"
   },
   {
@@ -30,7 +30,7 @@ export function ContactPage() {
         <SectionHeading
           eyebrow="Contact"
           title="Operate the launch with clear support and trust channels"
-          description="Sacred Match is a high-trust product, which means support, verification, and genotype education all need visible contact paths."
+          description="Spousia is a high-trust product, which means support, verification, and genotype education all need visible contact paths."
         />
       </section>
 

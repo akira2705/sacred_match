@@ -96,7 +96,7 @@ const intentQuestions = [
   {
     id: "sincerity",
     question: "Do you agree to our Code of Sincerity?",
-    subtext: "No harassment. No ghosting. No fishing. Sacred Match is a space of radical honesty and respect.",
+    subtext: "No harassment. No ghosting. No fishing. Spousia is a space of radical honesty and respect.",
     options: [
       { label: "Yes, I agree to the Code of Sincerity", pass: true },
       { label: "No, I don't agree", pass: false },
@@ -156,7 +156,7 @@ export function IntentWallPage() {
         <section className="section-shell pb-10 pt-16">
           <SectionHeading
             eyebrow="Intent check"
-            title="Sacred Match may not be the right fit right now"
+            title="Spousia may not be the right fit right now"
             description="Our platform is specifically designed for people who are actively seeking marriage."
           />
         </section>
@@ -170,7 +170,7 @@ export function IntentWallPage() {
                 We're sorry
               </h3>
               <p className="mx-auto mt-4 max-w-lg text-brand-forest/70 leading-7">
-                Sacred Match is exclusively for people with genuine marital intent.
+                Spousia is exclusively for people with genuine marital intent.
                 If your situation changes, you're welcome to return and start your
                 journey with us.
               </p>
@@ -244,7 +244,7 @@ export function IntentWallPage() {
         <SectionHeading
           eyebrow="Step 1 of 4 — Intent check"
           title="Before we begin, let's make sure we're aligned"
-          description="Sacred Match is built for people seeking marriage. These three questions help us protect the community."
+          description="Spousia is built for people seeking marriage. These three questions help us protect the community."
         />
       </section>
 
@@ -1104,7 +1104,7 @@ export function ReviewPage() {
   }
 
   function handleFinish() {
-    window.localStorage.setItem("sacred-match-token", "verified-user-token");
+    window.localStorage.setItem("spousia-token", "verified-user-token");
     navigate("/dashboard");
   }
 

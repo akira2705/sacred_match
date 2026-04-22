@@ -15,8 +15,8 @@ import {
 const MAX_ATTEMPTS = 5;
 const LOCKOUT_MINUTES = 15;
 const LOCKOUT_MS = LOCKOUT_MINUTES * 60 * 1000;
-const ATTEMPTS_KEY = "sacred-match-login-attempts";
-const LOCKOUT_KEY = "sacred-match-login-lockout-until";
+const ATTEMPTS_KEY = "spousia-login-attempts";
+const LOCKOUT_KEY = "spousia-login-lockout-until";
 
 const loginSchema = z.object({
   email: z.string().email("Enter a valid email address"),
@@ -119,12 +119,12 @@ export function LoginPage() {
     } else {
       forgetRememberedLogin();
     }
-    window.localStorage.setItem("sacred-match-token", token);
+    window.localStorage.setItem("spousia-token", token);
     const isAdmin = role === "ADMIN" || role === "admin";
     if (isAdmin) {
-      window.localStorage.setItem("sacred-match-role", "admin");
+      window.localStorage.setItem("spousia-role", "admin");
     } else {
-      window.localStorage.removeItem("sacred-match-role");
+      window.localStorage.removeItem("spousia-role");
     }
     navigate(isAdmin ? "/admin" : redirectTo);
   }

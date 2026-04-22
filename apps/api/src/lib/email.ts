@@ -10,7 +10,7 @@ interface SendEmailOptions {
   text?: string;
 }
 
-const FROM_ADDRESS = process.env.EMAIL_FROM ?? "Sacred Match <noreply@sacred-match.ng>";
+const FROM_ADDRESS = process.env.EMAIL_FROM ?? "Spousia <noreply@spousia.ng>";
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 
 export async function sendEmail(options: SendEmailOptions): Promise<void> {
@@ -45,7 +45,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<void> {
 
 export function buildOtpEmail(firstName: string, otp: string): Pick<SendEmailOptions, "subject" | "html" | "text"> {
   return {
-    subject: "Your Sacred Match verification code",
+    subject: "Your Spousia verification code",
     html: `
       <div style="font-family:sans-serif;max-width:480px;margin:auto">
         <h2 style="color:#2B1B6E">Your verification code</h2>
@@ -55,13 +55,13 @@ export function buildOtpEmail(firstName: string, otp: string): Pick<SendEmailOpt
         <p style="color:#888;font-size:0.85rem">If you didn't request this, ignore this email.</p>
       </div>
     `,
-    text: `Your Sacred Match verification code is: ${otp}\nExpires in 10 minutes.`,
+    text: `Your Spousia verification code is: ${otp}\nExpires in 10 minutes.`,
   };
 }
 
 export function buildPasswordResetEmail(firstName: string, resetUrl: string): Pick<SendEmailOptions, "subject" | "html" | "text"> {
   return {
-    subject: "Reset your Sacred Match password",
+    subject: "Reset your Spousia password",
     html: `
       <div style="font-family:sans-serif;max-width:480px;margin:auto">
         <h2 style="color:#2B1B6E">Reset your password</h2>
@@ -71,6 +71,6 @@ export function buildPasswordResetEmail(firstName: string, resetUrl: string): Pi
         <p style="color:#888;font-size:0.85rem;margin-top:1rem">If you didn't request a password reset, ignore this email.</p>
       </div>
     `,
-    text: `Reset your Sacred Match password here: ${resetUrl}\nExpires in 1 hour.`,
+    text: `Reset your Spousia password here: ${resetUrl}\nExpires in 1 hour.`,
   };
 }

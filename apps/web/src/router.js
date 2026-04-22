@@ -15,6 +15,7 @@ import { HowItWorksPage } from "@/pages/HowItWorksPage";
 import { LoginPage } from "@/pages/LoginPage";
 import { HelpPage, MessagesPage, ProfilePage, SafetyPage, SettingsPage } from "@/pages/MemberPages";
 import { NotFoundPage } from "@/pages/NotFoundPage";
+import { IntakePage } from "@/pages/IntakePage";
 import { OnboardingPage } from "@/pages/OnboardingPage";
 import { SignupPage } from "@/pages/SignupPage";
 import { DocumentVaultPage, IntentWallPage, LivenessCheckPage, ReviewPage, } from "@/pages/VerificationPages";
@@ -39,6 +40,18 @@ function RequireAuth({ children }) {
     const hasToken = typeof window !== "undefined" && Boolean(window.localStorage.getItem("sacred-match-token"));
     if (!hasToken) {
         return _jsx(Navigate, { replace: true, state: { from: location.pathname }, to: "/login" });
+    }
+    return children;
+}
+function RequireAdmin({ children }) {
+    const location = useLocation();
+    const hasToken = typeof window !== "undefined" && Boolean(window.localStorage.getItem("sacred-match-token"));
+    const isAdmin = typeof window !== "undefined" && window.localStorage.getItem("sacred-match-role") === "admin";
+    if (!hasToken) {
+        return _jsx(Navigate, { replace: true, state: { from: location.pathname }, to: "/login" });
+    }
+    if (!isAdmin) {
+        return _jsx(Navigate, { replace: true, to: "/dashboard" });
     }
     return children;
 }
@@ -74,6 +87,7 @@ export const router = createBrowserRouter([
             { path: "terms", element: _jsx(LegalPage, { eyebrow: "Terms of service", title: "Rules for using the platform responsibly", description: "These terms focus on serious relationship use, safety, trust, and respectful conduct.", sections: termsSections }) },
             { path: "data-protection", element: _jsx(LegalPage, { eyebrow: "Data protection", title: "Data handling principles for a trust-sensitive product", description: "A summary of the privacy and operational standards expected from the platform.", sections: dataProtectionSections }) },
             { path: "cookies", element: _jsx(LegalPage, { eyebrow: "Cookie policy", title: "How session and preference storage works", description: "A simple explanation of how storage supports authentication and experience continuity.", sections: cookieSections }) },
+            { path: "start", element: _jsx(IntakePage, {}) },
             { path: "signup", element: _jsx(SignupPage, {}) },
             { path: "login", element: _jsx(LoginPage, {}) },
             { path: "verify-otp", element: _jsx(VerifyOtpPage, {}) },
@@ -95,11 +109,11 @@ export const router = createBrowserRouter([
             { path: "settings", element: _jsx(RequireAuth, { children: _jsx(SettingsPage, {}) }) },
             { path: "safety", element: _jsx(RequireAuth, { children: _jsx(SafetyPage, {}) }) },
             { path: "help", element: _jsx(RequireAuth, { children: _jsx(HelpPage, {}) }) },
-            { path: "admin", element: _jsx(RequireAuth, { children: _jsx(AdminDashboardPage, {}) }) },
-            { path: "admin/reports", element: _jsx(RequireAuth, { children: _jsx(AdminReportsPage, {}) }) },
-            { path: "admin/users", element: _jsx(RequireAuth, { children: _jsx(AdminUsersPage, {}) }) },
-            { path: "admin/content", element: _jsx(RequireAuth, { children: _jsx(AdminContentPage, {}) }) },
-            { path: "admin/analytics", element: _jsx(RequireAuth, { children: _jsx(AdminAnalyticsPage, {}) }) },
+            { path: "admin", element: _jsx(RequireAdmin, { children: _jsx(AdminDashboardPage, {}) }) },
+            { path: "admin/reports", element: _jsx(RequireAdmin, { children: _jsx(AdminReportsPage, {}) }) },
+            { path: "admin/users", element: _jsx(RequireAdmin, { children: _jsx(AdminUsersPage, {}) }) },
+            { path: "admin/content", element: _jsx(RequireAdmin, { children: _jsx(AdminContentPage, {}) }) },
+            { path: "admin/analytics", element: _jsx(RequireAdmin, { children: _jsx(AdminAnalyticsPage, {}) }) },
         ],
     },
     {

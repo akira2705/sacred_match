@@ -71,7 +71,7 @@ export function HowItWorksPage() {
         <SectionHeading
           eyebrow="How it works"
           title="A clear relationship journey from verified signup to intentional conversation"
-          description="Sacred Match is designed to move users from account creation to profile completion, compatible discovery, and safe communication without drifting into wedding logistics."
+          description="Spousia is designed to move users from account creation to profile completion, compatible discovery, and safe communication without drifting into wedding logistics."
         />
       </section>
 
@@ -126,7 +126,7 @@ export function HowItWorksPage() {
               <div className="bg-brand-ink p-8 text-brand-cream sm:p-10">
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-gold">Scope boundary</p>
                 <h2 className="mt-4 font-display text-4xl font-semibold text-white">
-                  Sacred Match stops at connection, compatibility, and communication.
+                  Spousia stops at connection, compatibility, and communication.
                 </h2>
                 <p className="mt-5 text-base leading-8 text-brand-cream/80">
                   The product does not handle bride price, ceremony planning, family-introduction workflows, or wedding coordination. That line stays explicit so the experience stays focused and credible.

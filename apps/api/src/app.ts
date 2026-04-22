@@ -30,7 +30,7 @@ export function createApp() {
   app.get("/", (_request, response) => {
     response.json({
       ok: true,
-      service: "Sacred Match API",
+      service: "Spousia API",
       version: "0.1.0"
     });
   });

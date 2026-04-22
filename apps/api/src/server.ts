@@ -8,7 +8,7 @@ export async function startServer() {
   const app = createApp();
 
   const server = app.listen(env.PORT, () => {
-    console.log(`Sacred Match API listening on http://localhost:${env.PORT}`);
+    console.log(`Spousia API listening on http://localhost:${env.PORT}`);
   });
 
   const shutdown = async () => {

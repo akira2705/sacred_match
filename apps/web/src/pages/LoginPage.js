@@ -154,14 +154,17 @@ export function LoginPage() {
                 forgetRememberedLogin();
             }
             window.localStorage.setItem("sacred-match-token", response.token || (isAdminLogin ? "admin-development-token" : "local-development-token"));
-            if (isAdminLogin) {
+            // Use role from server response; fall back to credential-based check for offline mode
+            const serverRole = response.role ?? (isAdminLogin ? "ADMIN" : null);
+            const isAdmin = serverRole === "ADMIN" || serverRole === "admin" || isAdminLogin;
+            if (isAdmin) {
                 window.localStorage.setItem("sacred-match-role", "admin");
             }
             else {
                 window.localStorage.removeItem("sacred-match-role");
             }
             setMessage(response.message);
-            navigate(isAdminLogin ? "/admin" : redirectTo);
+            navigate(isAdmin ? "/admin" : redirectTo);
         }
         catch (error) {
             const normalizedError = normalizeLoginError(error);

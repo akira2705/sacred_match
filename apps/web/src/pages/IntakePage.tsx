@@ -55,7 +55,7 @@ const intakeSchema = z.object({
 
 type IntakeValues = z.infer<typeof intakeSchema>;
 
-const INTAKE_KEY = "sacred-match-intake";
+const INTAKE_KEY = "spousia-intake";
 
 export function IntakePage() {
   const navigate = useNavigate();

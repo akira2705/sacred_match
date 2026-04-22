@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Search } from "lucide-react";
 import { RevealOnScroll } from "@/components/RevealOnScroll";
+import { Seo } from "@/components/Seo";
+import { Skeleton, SkeletonText } from "@/components/Skeleton";
 import { SectionHeading } from "@/components/SectionHeading";
 import { blogArticles, categorizedFaqs, type BlogArticle } from "@/content/contentHubData";
 
@@ -22,6 +24,11 @@ export function BlogPage() {
 
   return (
     <div>
+      <Seo
+        title="Blog â€” Relationship & Genotype Guides"
+        description="Read Spousia's guides on genotype compatibility, Nigerian marriage culture, profile quality, and building serious relationships."
+        canonical="https://spousia.ng/blog"
+      />
       <section className="section-shell pb-10 pt-16">
         <SectionHeading
           eyebrow="Blog"
@@ -69,11 +76,11 @@ export function BlogPage() {
                 <img alt={article.title} className="h-56 w-full object-cover" src={article.image} />
                 <div className="p-7">
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-clay">
-                    {article.category} • {article.readTime}
+                    {article.category} ï¿½ {article.readTime}
                   </p>
                   <h2 className="mt-4 font-display text-3xl font-semibold text-brand-ink">{article.title}</h2>
                   <p className="mt-4 text-sm leading-7 text-brand-forest/80">{article.excerpt}</p>
-                  <p className="mt-5 text-sm text-brand-forest/65">By {article.author} • {article.publishedAt}</p>
+                  <p className="mt-5 text-sm text-brand-forest/65">By {article.author} ï¿½ {article.publishedAt}</p>
                   <Link className="mt-6 inline-flex rounded-full bg-brand-forest px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-emerald" to={`/blog/${article.slug}`}>
                     Read article
                   </Link>
@@ -115,7 +122,7 @@ export function BlogArticlePage() {
             <p className="eyebrow">{article.category}</p>
             <h1 className="mt-6 font-display text-5xl font-semibold text-brand-ink">{article.title}</h1>
             <p className="mt-5 text-lg leading-8 text-brand-forest/80">{article.excerpt}</p>
-            <p className="mt-5 text-sm text-brand-forest/60">By {article.author} • {article.publishedAt} • {article.readTime}</p>
+            <p className="mt-5 text-sm text-brand-forest/60">By {article.author} ï¿½ {article.publishedAt} ï¿½ {article.readTime}</p>
           </div>
         </RevealOnScroll>
       </section>

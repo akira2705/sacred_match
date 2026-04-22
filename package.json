@@ -1,5 +1,5 @@
 {
-  "name": "sacred-match-platform",
+  "name": "spousia-platform",
   "version": "0.1.0",
   "private": true,
   "workspaces": [
@@ -13,16 +13,16 @@
   "scripts": {
     "infra:up": "docker compose up -d db redis",
     "infra:down": "docker compose down",
-    "dev:web": "npm run dev --workspace @sacred-match/web",
-    "dev:api": "npm run dev --workspace @sacred-match/api",
+    "dev:web": "npm run dev --workspace @spousia/web",
+    "dev:api": "npm run dev --workspace @spousia/api",
     "dev:setup": "npm run infra:up && npm run prisma:generate && npm run prisma:migrate && npm run prisma:seed",
-    "build": "npm run build --workspace @sacred-match/api && npm run build --workspace @sacred-match/web",
-    "build:web": "npm run build --workspace @sacred-match/web",
-    "build:api": "npm run build --workspace @sacred-match/api",
+    "build": "npm run build --workspace @spousia/api && npm run build --workspace @spousia/web",
+    "build:web": "npm run build --workspace @spousia/web",
+    "build:api": "npm run build --workspace @spousia/api",
     "lint": "npm run lint --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
-    "prisma:generate": "npm run prisma:generate --workspace @sacred-match/api",
-    "prisma:migrate": "npm run prisma:migrate --workspace @sacred-match/api",
-    "prisma:seed": "npm run prisma:seed --workspace @sacred-match/api"
+    "prisma:generate": "npm run prisma:generate --workspace @spousia/api",
+    "prisma:migrate": "npm run prisma:migrate --workspace @spousia/api",
+    "prisma:seed": "npm run prisma:seed --workspace @spousia/api"
   }
 }

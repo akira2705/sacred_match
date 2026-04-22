@@ -8,10 +8,10 @@ interface SeoProps {
   noIndex?: boolean;
 }
 
-const SITE_NAME = "Sacred Match";
+const SITE_NAME = "Spousia";
 const DEFAULT_DESCRIPTION =
-  "Sacred Match is Nigeria's premium matrimony platform for culture-first compatibility, genotype awareness, and serious marriage-minded connections.";
-const DEFAULT_OG_IMAGE = "https://sacred-match.ng/og-image.png";
+  "Spousia is Nigeria's premium matrimony platform for culture-first compatibility, genotype awareness, and serious marriage-minded connections.";
+const DEFAULT_OG_IMAGE = "https://spousia.ng/og-image.png";
 
 export function Seo({ title, description, canonical, ogImage, noIndex }: SeoProps) {
   const fullTitle = title ? `${title} — ${SITE_NAME}` : SITE_NAME;

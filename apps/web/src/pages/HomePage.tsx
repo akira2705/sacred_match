@@ -89,8 +89,8 @@ export function HomePage() {
     <div className="font-body">
       <Seo
         title="Find a Life Partner, Not Just a Date"
-        description="Sacred Match is Nigeria's premium matrimony platform for verified, marriage-minded singles. Genotype-aware matching, identity verification, and culture-first compatibility."
-        canonical="https://sacred-match.ng"
+        description="Spousia is Nigeria's premium matrimony platform for verified, marriage-minded singles. Genotype-aware matching, identity verification, and culture-first compatibility."
+        canonical="https://spousia.ng"
       />
 
       {/* ══════════════════════════════════════════════════════════════════
@@ -286,7 +286,7 @@ export function HomePage() {
                 </span>
               </h2>
               <p className="mt-5 text-base leading-8 text-brand-forest/70">
-                Sacred Match is the only Nigerian matrimony platform that integrates genotype
+                Spousia is the only Nigerian matrimony platform that integrates genotype
                 compatibility into the matchmaking process — privately, thoughtfully, and without
                 awkward late-stage conversations.
               </p>

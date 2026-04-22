@@ -63,7 +63,7 @@ router.post("/sign", async (request, response, next) => {
 
     if (cloudinary) {
       // Cloudinary signed upload
-      const folder = `sacred-match/${userId}/${purpose}`;
+      const folder = `spousia/${userId}/${purpose}`;
       const publicId = `${folder}/${crypto.randomUUID()}`;
       const params: Record<string, string> = { folder, public_id: publicId, timestamp };
 

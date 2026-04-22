@@ -5,7 +5,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { RevealOnScroll } from "@/components/RevealOnScroll";
 import { SectionHeading } from "@/components/SectionHeading";
 import { loadVerificationFlow, saveVerificationFlow, } from "@/lib/profileStorage";
-import { idTypes } from "@/content/onboardingData";
 /* ─── shared progress bar ─── */
 const STAGES = [
     { label: "Intent", path: "/onboarding/intent" },
@@ -26,38 +25,30 @@ function VerificationProgress({ current }) {
 const intentQuestions = [
     {
         id: "reason",
-        question: "What is your primary reason for joining Sacred Match?",
+        question: "Are you seeking a casual relationship or a life partner for marriage?",
         options: [
-            { label: "I'm ready to find a life partner for marriage", pass: true },
-            { label: "Exploring serious relationships that lead to marriage", pass: true },
-            { label: "Just looking around / curious", pass: false },
-            { label: "Looking for casual dating", pass: false },
+            { label: "A life partner for marriage", pass: true },
+            { label: "A casual relationship", pass: false },
+            { label: "Not sure yet", pass: false },
+            { label: "Just exploring", pass: false },
         ],
     },
     {
-        id: "timeline",
-        question: "How soon are you hoping to get married?",
+        id: "verification",
+        question: "Are you willing to undergo government ID verification to protect this community?",
+        subtext: "Please note that your data is encrypted and handled with strict confidentiality.",
         options: [
-            { label: "Within the next 6 months", pass: true },
-            { label: "Within the next 1-2 years", pass: true },
-            { label: "Not sure, maybe someday", pass: false },
-            { label: "I'm not thinking about marriage right now", pass: false },
+            { label: "Yes, I understand and agree", pass: true },
+            { label: "No, I'd rather skip that", pass: false },
         ],
     },
     {
-        id: "commitment",
-        question: "Are you willing to verify your identity and complete a readiness questionnaire?",
+        id: "sincerity",
+        question: "Do you agree to our Code of Sincerity?",
+        subtext: "No harassment. No ghosting. No fishing. Sacred Match is a space of radical honesty and respect.",
         options: [
-            {
-                label: "Yes, I understand this builds trust for everyone",
-                pass: true,
-            },
-            {
-                label: "Yes, if it means better quality matches",
-                pass: true,
-            },
-            { label: "I'd rather skip verification", pass: false },
-            { label: "No, that feels like too much", pass: false },
+            { label: "Yes, I agree to the Code of Sincerity", pass: true },
+            { label: "No, I don't agree", pass: false },
         ],
     },
 ];
@@ -96,7 +87,7 @@ export function IntentWallPage() {
     const q = intentQuestions[currentQ];
     const currentAnswer = answers[q.id];
     if (showResult && failed) {
-        return (_jsxs("div", { children: [_jsx("section", { className: "section-shell pb-10 pt-16", children: _jsx(SectionHeading, { eyebrow: "Intent check", title: "Sacred Match may not be the right fit right now", description: "Our platform is specifically designed for people who are actively seeking marriage." }) }), _jsx("section", { className: "section-shell pt-0", children: _jsx(RevealOnScroll, { children: _jsxs("div", { className: "surface-card p-8 sm:p-10 text-center", children: [_jsx("div", { className: "mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-amber-100", children: _jsx(AlertTriangle, { className: "text-amber-600", size: 28 }) }), _jsx("h3", { className: "font-display text-2xl font-semibold text-brand-ink", children: "We appreciate your honesty" }), _jsx("p", { className: "mx-auto mt-4 max-w-lg text-brand-forest/70 leading-7", children: "Based on your responses, it seems you may not be ready for the marriage-focused experience Sacred Match offers. You're welcome to come back anytime your intentions change." }), _jsxs("div", { className: "mt-8 flex flex-wrap justify-center gap-3", children: [_jsx(Link, { className: "rounded-full bg-brand-forest px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-emerald", to: "/", children: "Return Home" }), _jsx("button", { className: "rounded-full border border-brand-forest/15 px-6 py-3 text-sm font-semibold text-brand-forest", onClick: () => {
+        return (_jsxs("div", { children: [_jsx("section", { className: "section-shell pb-10 pt-16", children: _jsx(SectionHeading, { eyebrow: "Intent check", title: "Sacred Match may not be the right fit right now", description: "Our platform is specifically designed for people who are actively seeking marriage." }) }), _jsx("section", { className: "section-shell pt-0", children: _jsx(RevealOnScroll, { children: _jsxs("div", { className: "surface-card p-8 sm:p-10 text-center", children: [_jsx("div", { className: "mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-amber-100", children: _jsx(AlertTriangle, { className: "text-amber-600", size: 28 }) }), _jsx("h3", { className: "font-display text-2xl font-semibold text-brand-ink", children: "We're sorry" }), _jsx("p", { className: "mx-auto mt-4 max-w-lg text-brand-forest/70 leading-7", children: "Sacred Match is exclusively for people with genuine marital intent. If your situation changes, you're welcome to return and start your journey with us." }), _jsxs("div", { className: "mt-8 flex flex-wrap justify-center gap-3", children: [_jsx(Link, { className: "rounded-full bg-brand-forest px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-emerald", to: "/", children: "Return Home" }), _jsx("button", { className: "rounded-full border border-brand-forest/15 px-6 py-3 text-sm font-semibold text-brand-forest", onClick: () => {
                                                 setShowResult(false);
                                                 setFailed(false);
                                                 setCurrentQ(0);
@@ -106,7 +97,7 @@ export function IntentWallPage() {
     if (showResult && !failed) {
         return (_jsxs("div", { children: [_jsx("section", { className: "section-shell pb-10 pt-16", children: _jsx(SectionHeading, { eyebrow: "Intent verified", title: "You're in the right place", description: "Your responses show you're serious about finding a life partner." }) }), _jsx("section", { className: "section-shell pt-0", children: _jsx(RevealOnScroll, { children: _jsxs("div", { className: "surface-card p-8 sm:p-10 text-center", children: [_jsx("div", { className: "mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100", children: _jsx(CheckCircle2, { className: "text-emerald-600", size: 28 }) }), _jsx("h3", { className: "font-display text-2xl font-semibold text-brand-ink", children: "Welcome to the trust journey" }), _jsx("p", { className: "mx-auto mt-4 max-w-lg text-brand-forest/70 leading-7", children: "Next, we'll verify your identity. This keeps our community safe and ensures every profile is real." }), _jsxs("button", { className: "mt-8 inline-flex items-center gap-2 rounded-full bg-brand-clay px-8 py-3 text-sm font-semibold text-white transition hover:bg-brand-gold", onClick: () => navigate("/onboarding/documents"), type: "button", children: ["Continue to Document Verification ", _jsx(ChevronRight, { size: 16 })] })] }) }) })] }));
     }
-    return (_jsxs("div", { children: [_jsx("section", { className: "section-shell pb-10 pt-16", children: _jsx(SectionHeading, { eyebrow: "Step 1 of 4 \u2014 Intent check", title: "Before we begin, let's make sure we're aligned", description: "Sacred Match is built for people seeking marriage. These three questions help us protect the community." }) }), _jsx("section", { className: "section-shell pt-0", children: _jsx(VerificationProgress, { current: 0 }) }), _jsx("section", { className: "section-shell pt-0", children: _jsx(RevealOnScroll, { children: _jsxs("div", { className: "surface-card p-8 sm:p-10", children: [_jsx("div", { className: "mb-2 flex items-center gap-2", children: _jsxs("span", { className: "rounded-full bg-brand-forest/10 px-3 py-1 text-xs font-semibold text-brand-forest", children: ["Question ", currentQ + 1, " of ", intentQuestions.length] }) }), _jsx("h3", { className: "mt-4 font-display text-xl font-semibold text-brand-ink sm:text-2xl", children: q.question }), _jsx("div", { className: "mt-6 grid gap-3", children: q.options.map((opt) => (_jsx("button", { className: `rounded-[1.5rem] border px-6 py-4 text-left text-sm font-semibold transition ${currentAnswer?.label === opt.label
+    return (_jsxs("div", { children: [_jsx("section", { className: "section-shell pb-10 pt-16", children: _jsx(SectionHeading, { eyebrow: "Step 1 of 4 \u2014 Intent check", title: "Before we begin, let's make sure we're aligned", description: "Sacred Match is built for people seeking marriage. These three questions help us protect the community." }) }), _jsx("section", { className: "section-shell pt-0", children: _jsx(VerificationProgress, { current: 0 }) }), _jsx("section", { className: "section-shell pt-0", children: _jsx(RevealOnScroll, { children: _jsxs("div", { className: "surface-card p-8 sm:p-10", children: [_jsx("div", { className: "mb-2 flex items-center gap-2", children: _jsxs("span", { className: "rounded-full bg-brand-forest/10 px-3 py-1 text-xs font-semibold text-brand-forest", children: ["Question ", currentQ + 1, " of ", intentQuestions.length] }) }), _jsx("h3", { className: "mt-4 font-display text-xl font-semibold text-brand-ink sm:text-2xl", children: q.question }), "subtext" in q && q.subtext && (_jsx("p", { className: "mt-3 text-sm leading-6 text-brand-forest/70", children: q.subtext })), _jsx("div", { className: "mt-6 grid gap-3", children: q.options.map((opt) => (_jsx("button", { className: `rounded-[1.5rem] border px-6 py-4 text-left text-sm font-semibold transition ${currentAnswer?.label === opt.label
                                         ? "border-brand-forest bg-brand-forest text-white"
                                         : "border-brand-forest/10 bg-brand-forest/5 text-brand-forest hover:border-brand-forest/30"}`, onClick: () => selectAnswer(q.id, opt), type: "button", children: opt.label }, opt.label))) }), _jsxs("div", { className: "mt-8 flex items-center justify-between", children: [_jsx("button", { className: "rounded-full border border-brand-forest/15 px-5 py-3 text-sm font-semibold text-brand-forest disabled:opacity-40", disabled: currentQ === 0, onClick: () => setCurrentQ((c) => c - 1), type: "button", children: "Back" }), _jsxs("button", { className: "inline-flex items-center gap-2 rounded-full bg-brand-forest px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-emerald disabled:opacity-40", disabled: !currentAnswer, onClick: handleNext, type: "button", children: [currentQ === intentQuestions.length - 1
                                                 ? "Submit"
@@ -163,8 +154,8 @@ export function DocumentVaultPage() {
         saveVerificationFlow(updated);
         navigate("/onboarding/liveness");
     }
-    const isValid = idType && frontFile && photoFile;
-    return (_jsxs("div", { children: [_jsx("section", { className: "section-shell pb-10 pt-16", children: _jsx(SectionHeading, { eyebrow: "Step 2 of 4 \u2014 Document verification", title: "Upload your identity documents", description: "Your documents are encrypted and stored securely. They are only used for verification and never shared." }) }), _jsx("section", { className: "section-shell pt-0", children: _jsx(VerificationProgress, { current: 1 }) }), _jsx("section", { className: "section-shell pt-0", children: _jsx(RevealOnScroll, { children: _jsxs("div", { className: "surface-card p-8 sm:p-10", children: [_jsxs("div", { className: "mb-8 flex items-start gap-3 rounded-[1.5rem] border border-brand-forest/10 bg-brand-forest/5 px-5 py-4", children: [_jsx(Lock, { className: "mt-0.5 shrink-0 text-brand-forest", size: 18 }), _jsxs("div", { className: "text-sm leading-6 text-brand-forest/80", children: [_jsx("span", { className: "font-semibold text-brand-ink", children: "Bank-grade security." }), " ", "All documents are encrypted at rest and in transit. Our verification team follows strict data handling protocols."] })] }), _jsxs("div", { className: "grid gap-8", children: [_jsxs("label", { className: "grid gap-2", children: [_jsx("span", { className: "text-sm font-semibold text-brand-forest", children: "ID Type" }), _jsxs("select", { className: "input-shell", value: idType, onChange: (e) => setIdType(e.target.value), children: [_jsx("option", { value: "", children: "Select your ID type..." }), idTypes.map((t) => (_jsx("option", { children: t }, t)))] })] }), _jsxs("div", { className: "grid gap-2", children: [_jsxs("span", { className: "text-sm font-semibold text-brand-forest", children: ["Front of ID ", _jsx("span", { className: "text-rose-500", children: "*" })] }), _jsxs("div", { className: `relative rounded-[2rem] border-2 border-dashed p-8 text-center transition ${dragOver === "front"
+    const isValid = idType && frontFile;
+    return (_jsxs("div", { children: [_jsx("section", { className: "section-shell pb-10 pt-16", children: _jsx(SectionHeading, { eyebrow: "Step 2 of 4 \u2014 Document verification", title: "Upload your identity documents", description: "Your documents are encrypted and stored securely. They are only used for verification and never shared." }) }), _jsx("section", { className: "section-shell pt-0", children: _jsx(VerificationProgress, { current: 1 }) }), _jsx("section", { className: "section-shell pt-0", children: _jsx(RevealOnScroll, { children: _jsxs("div", { className: "surface-card p-8 sm:p-10", children: [_jsxs("div", { className: "mb-8 flex items-start gap-3 rounded-[1.5rem] border border-brand-forest/10 bg-brand-forest/5 px-5 py-4", children: [_jsx(Lock, { className: "mt-0.5 shrink-0 text-brand-forest", size: 18 }), _jsxs("div", { className: "text-sm leading-6 text-brand-forest/80", children: [_jsx("span", { className: "font-semibold text-brand-ink", children: "Your data is encrypted." }), " ", "We do not store your ID number. We only verify that the name and face on your document match your profile. All uploads are handled with bank-grade security."] })] }), _jsxs("div", { className: "grid gap-8", children: [_jsxs("label", { className: "grid gap-2", children: [_jsx("span", { className: "text-sm font-semibold text-brand-forest", children: "ID Type" }), _jsxs("select", { className: "input-shell", value: idType, onChange: (e) => setIdType(e.target.value), children: [_jsx("option", { value: "", children: "Select your ID type..." }), _jsx("option", { children: "NIN Slip" }), _jsx("option", { children: "International Passport" }), _jsx("option", { children: "Voter's Card" }), _jsx("option", { children: "Driver's License" })] })] }), _jsxs("div", { className: "grid gap-2", children: [_jsxs("span", { className: "text-sm font-semibold text-brand-forest", children: ["Front of ID ", _jsx("span", { className: "text-rose-500", children: "*" })] }), _jsxs("div", { className: `relative rounded-[2rem] border-2 border-dashed p-8 text-center transition ${dragOver === "front"
                                                     ? "border-brand-clay bg-brand-clay/5"
                                                     : frontFile
                                                         ? "border-emerald-300 bg-emerald-50"
@@ -172,7 +163,7 @@ export function DocumentVaultPage() {
                                                     ? "border-brand-clay bg-brand-clay/5"
                                                     : backFile
                                                         ? "border-emerald-300 bg-emerald-50"
-                                                        : "border-brand-forest/20 bg-brand-forest/5"}`, onDragLeave: handleDragLeave, onDragOver: (e) => handleDragOver(e, "back"), onDrop: (e) => handleDrop(e, setBackFile), children: [backFile ? (_jsxs("div", { className: "flex items-center justify-center gap-3", children: [_jsx(FileText, { className: "text-emerald-600", size: 20 }), _jsx("span", { className: "font-semibold text-emerald-900", children: backFile.name }), _jsx("button", { className: "rounded-full p-1 hover:bg-emerald-100", onClick: () => setBackFile(null), type: "button", children: _jsx(X, { size: 16 }) })] })) : (_jsxs(_Fragment, { children: [_jsx(Upload, { className: "mx-auto mb-3 text-brand-forest/40", size: 28 }), _jsxs("p", { className: "font-semibold text-brand-forest", children: ["Drag & drop or", " ", _jsx("button", { className: "text-brand-clay underline", onClick: () => backRef.current?.click(), type: "button", children: "browse" })] }), _jsx("p", { className: "mt-1 text-sm text-brand-forest/60", children: "JPEG, PNG or PDF, max 10MB" })] })), _jsx("input", { ref: backRef, accept: "image/*,application/pdf", className: "sr-only", onChange: (e) => e.target.files?.[0] && setBackFile(e.target.files[0]), type: "file" })] })] }), _jsxs("div", { className: "grid gap-2", children: [_jsxs("span", { className: "text-sm font-semibold text-brand-forest", children: ["Passport-style photo", " ", _jsx("span", { className: "text-rose-500", children: "*" })] }), _jsxs("div", { className: `relative rounded-[2rem] border-2 border-dashed p-8 text-center transition ${dragOver === "photo"
+                                                        : "border-brand-forest/20 bg-brand-forest/5"}`, onDragLeave: handleDragLeave, onDragOver: (e) => handleDragOver(e, "back"), onDrop: (e) => handleDrop(e, setBackFile), children: [backFile ? (_jsxs("div", { className: "flex items-center justify-center gap-3", children: [_jsx(FileText, { className: "text-emerald-600", size: 20 }), _jsx("span", { className: "font-semibold text-emerald-900", children: backFile.name }), _jsx("button", { className: "rounded-full p-1 hover:bg-emerald-100", onClick: () => setBackFile(null), type: "button", children: _jsx(X, { size: 16 }) })] })) : (_jsxs(_Fragment, { children: [_jsx(Upload, { className: "mx-auto mb-3 text-brand-forest/40", size: 28 }), _jsxs("p", { className: "font-semibold text-brand-forest", children: ["Drag & drop or", " ", _jsx("button", { className: "text-brand-clay underline", onClick: () => backRef.current?.click(), type: "button", children: "browse" })] }), _jsx("p", { className: "mt-1 text-sm text-brand-forest/60", children: "JPEG, PNG or PDF, max 10MB" })] })), _jsx("input", { ref: backRef, accept: "image/*,application/pdf", className: "sr-only", onChange: (e) => e.target.files?.[0] && setBackFile(e.target.files[0]), type: "file" })] })] }), _jsxs("div", { className: "grid gap-2", children: [_jsxs("span", { className: "text-sm font-semibold text-brand-forest", children: ["Profile photo", " ", _jsx("span", { className: "text-brand-forest/50", children: "(optional, but strongly recommended)" })] }), _jsx("p", { className: "text-xs text-brand-forest/60", children: "No inappropriate photos. Clear face, no filters." }), _jsxs("div", { className: `relative rounded-[2rem] border-2 border-dashed p-8 text-center transition ${dragOver === "photo"
                                                     ? "border-brand-clay bg-brand-clay/5"
                                                     : photoFile
                                                         ? "border-emerald-300 bg-emerald-50"
@@ -214,7 +205,7 @@ export function LivenessCheckPage() {
         saveVerificationFlow(updated);
         navigate("/onboarding/review");
     }
-    return (_jsxs("div", { children: [_jsx("section", { className: "section-shell pb-10 pt-16", children: _jsx(SectionHeading, { eyebrow: "Step 3 of 4 \u2014 Liveness check", title: "Prove you're a real person", description: "A quick selfie and optional video confirm you're who you say you are. This protects you and every member." }) }), _jsx("section", { className: "section-shell pt-0", children: _jsx(VerificationProgress, { current: 2 }) }), _jsx("section", { className: "section-shell pt-0", children: _jsx(RevealOnScroll, { children: _jsxs("div", { className: "surface-card p-8 sm:p-10", children: [step === "instructions" && (_jsxs("div", { className: "grid gap-8", children: [_jsxs("div", { className: "mx-auto max-w-lg text-center", children: [_jsx("div", { className: "mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-brand-forest/10", children: _jsx(Shield, { className: "text-brand-forest", size: 36 }) }), _jsx("h3", { className: "font-display text-xl font-semibold text-brand-ink", children: "How liveness verification works" }), _jsx("p", { className: "mt-3 text-sm leading-7 text-brand-forest/70", children: "We'll compare your selfie against the ID photo you uploaded. This ensures no one is using someone else's identity." })] }), _jsxs("div", { className: "mx-auto grid max-w-2xl gap-4 md:grid-cols-2", children: [_jsxs("div", { className: "rounded-[1.5rem] border border-brand-forest/10 bg-brand-forest/5 p-6", children: [_jsx(Camera, { className: "mb-3 text-brand-clay", size: 22 }), _jsx("p", { className: "font-semibold text-brand-ink", children: "Live selfie" }), _jsx("p", { className: "mt-2 text-sm leading-6 text-brand-forest/70", children: "Take a clear, well-lit photo of your face. Remove sunglasses, hats, or face coverings." })] }), _jsxs("div", { className: "rounded-[1.5rem] border border-brand-forest/10 bg-brand-forest/5 p-6", children: [_jsx(Video, { className: "mb-3 text-brand-clay", size: 22 }), _jsxs("p", { className: "font-semibold text-brand-ink", children: ["Short video", " ", _jsx("span", { className: "text-brand-forest/50", children: "(optional)" })] }), _jsx("p", { className: "mt-2 text-sm leading-6 text-brand-forest/70", children: "A 5-second video turning your head left and right adds an extra layer of trust to your profile." })] })] }), _jsxs("div", { className: "rounded-[1.5rem] border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-900", children: [_jsx("strong", { children: "Tips for success:" }), " Use natural lighting, face the camera directly, keep a neutral expression, and ensure your full face is visible."] }), _jsx("div", { className: "text-center", children: _jsxs("button", { className: "inline-flex items-center gap-2 rounded-full bg-brand-forest px-8 py-3 text-sm font-semibold text-white transition hover:bg-brand-emerald", onClick: () => setStep("selfie"), type: "button", children: ["I'm ready \u2014 let's go ", _jsx(ChevronRight, { size: 16 })] }) })] })), step === "selfie" && (_jsxs("div", { className: "grid gap-6", children: [_jsx("h3", { className: "font-display text-xl font-semibold text-brand-ink", children: "Take your selfie" }), _jsxs("div", { className: `rounded-[2rem] border-2 border-dashed p-10 text-center transition ${selfieFile
+    return (_jsxs("div", { children: [_jsx("section", { className: "section-shell pb-10 pt-16", children: _jsx(SectionHeading, { eyebrow: "Step 3 of 4 \u2014 Liveness check", title: "Prove you're a real person", description: "A quick selfie and optional video confirm you're who you say you are. This protects you and every member." }) }), _jsx("section", { className: "section-shell pt-0", children: _jsx(VerificationProgress, { current: 2 }) }), _jsx("section", { className: "section-shell pt-0", children: _jsx(RevealOnScroll, { children: _jsxs("div", { className: "surface-card p-8 sm:p-10", children: [step === "instructions" && (_jsxs("div", { className: "grid gap-8", children: [_jsxs("div", { className: "mx-auto max-w-lg text-center", children: [_jsx("div", { className: "mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-brand-forest/10", children: _jsx(Shield, { className: "text-brand-forest", size: 36 }) }), _jsx("h3", { className: "font-display text-xl font-semibold text-brand-ink", children: "How liveness verification works" }), _jsx("p", { className: "mt-3 text-sm leading-7 text-brand-forest/70", children: "We'll compare your selfie against the ID photo you uploaded. This ensures no one is using someone else's identity." })] }), _jsxs("div", { className: "mx-auto grid max-w-2xl gap-4 md:grid-cols-2", children: [_jsxs("div", { className: "rounded-[1.5rem] border border-brand-forest/10 bg-brand-forest/5 p-6", children: [_jsx(Camera, { className: "mb-3 text-brand-clay", size: 22 }), _jsx("p", { className: "font-semibold text-brand-ink", children: "Live selfie" }), _jsx("p", { className: "mt-2 text-sm leading-6 text-brand-forest/70", children: "Take a clear, well-lit photo of your face. Remove sunglasses, hats, or face coverings." })] }), _jsxs("div", { className: "rounded-[1.5rem] border border-brand-forest/10 bg-brand-forest/5 p-6", children: [_jsx(Video, { className: "mb-3 text-brand-clay", size: 22 }), _jsxs("p", { className: "font-semibold text-brand-ink", children: ["Short video", " ", _jsx("span", { className: "text-brand-forest/50", children: "(optional)" })] }), _jsx("p", { className: "mt-2 text-sm leading-6 text-brand-forest/70", children: "A 3-second liveness video or 3D selfie confirms you're real and matches your face against your ID photo." })] })] }), _jsxs("div", { className: "rounded-[1.5rem] border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-900", children: [_jsx("strong", { children: "Tips for success:" }), " Ensure your face is well-lit. Remove glasses and hats. Face the camera directly with your full face visible."] }), _jsx("div", { className: "text-center", children: _jsxs("button", { className: "inline-flex items-center gap-2 rounded-full bg-brand-forest px-8 py-3 text-sm font-semibold text-white transition hover:bg-brand-emerald", onClick: () => setStep("selfie"), type: "button", children: ["I'm ready \u2014 let's go ", _jsx(ChevronRight, { size: 16 })] }) })] })), step === "selfie" && (_jsxs("div", { className: "grid gap-6", children: [_jsx("h3", { className: "font-display text-xl font-semibold text-brand-ink", children: "Take your selfie" }), _jsxs("div", { className: `rounded-[2rem] border-2 border-dashed p-10 text-center transition ${selfieFile
                                             ? "border-emerald-300 bg-emerald-50"
                                             : "border-brand-forest/20 bg-brand-forest/5"}`, children: [selfieFile ? (_jsxs("div", { className: "flex flex-col items-center gap-3", children: [_jsx("div", { className: "flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100", children: _jsx(CheckCircle2, { className: "text-emerald-600", size: 28 }) }), _jsx("p", { className: "font-semibold text-emerald-900", children: selfieFile.name }), _jsx("button", { className: "text-sm text-brand-clay underline", onClick: () => {
                                                             setSelfieFile(null);
@@ -232,128 +223,114 @@ export function LivenessCheckPage() {
 const readinessQuestions = [
     {
         id: 1,
-        question: "What does marriage mean to you?",
+        question: "Ideally, how soon are you looking to transition from meeting to marriage?",
         type: "single",
         options: [
-            "A lifelong covenant before God",
-            "A partnership built on love and commitment",
-            "A cultural and family expectation I embrace",
-            "A foundation for building a family together",
+            "I am ready now",
+            "Within 6 months",
+            "6–12 months",
+            "1–2 years",
         ],
     },
     {
         id: 2,
-        question: "How do you handle disagreements in a relationship?",
+        question: "What is your genotype?",
         type: "single",
-        options: [
-            "I prefer calm discussion until we find common ground",
-            "I need time alone first, then I come back to talk",
-            "I seek advice from a trusted elder or counselor",
-            "I try to compromise quickly to keep the peace",
-        ],
+        options: ["AA", "AS", "SS", "Prefer not to say / Not yet tested"],
     },
     {
         id: 3,
-        question: "How important is financial planning in marriage?",
+        question: "What is your current stance on having or raising children?",
         type: "single",
         options: [
-            "Essential — we should budget and plan together",
-            "Important, but we can figure it out as we go",
-            "I prefer one partner to handle finances",
-            "Money shouldn't be a big topic between spouses",
+            "Want children",
+            "Have children & want more",
+            "Have children & done",
+            "Not looking to have children",
         ],
     },
     {
         id: 4,
-        question: "What role does family play in your marriage decision?",
+        question: "Are you open to relocating for the right partner?",
         type: "single",
         options: [
-            "My family's blessing is essential before I proceed",
-            "I value their input but the final decision is mine",
-            "Family should respect our independence as a couple",
-            "I want a partner who fits well with my extended family",
+            "Yes, locally (within Nigeria)",
+            "Yes, internationally (Diaspora)",
+            "No, I am settled where I am",
         ],
     },
     {
         id: 5,
-        question: "How do you envision household responsibilities?",
+        question: "How do you view financial management in a marriage?",
         type: "single",
         options: [
-            "Shared equally based on availability and skill",
-            "Traditional roles — each person has defined duties",
-            "Flexible — whoever is available handles what's needed",
-            "We should discuss and agree before marriage",
+            "Fully joint accounts",
+            "Separate accounts with a joint household fund",
+            "Traditional (one primary breadwinner)",
         ],
     },
     {
         id: 6,
-        question: "How many children would you like to have?",
+        question: "How important is it that your partner has a similar level of career ambition or income?",
         type: "single",
         options: [
-            "1-2 children",
-            "3-4 children",
-            "Open to however many God blesses us with",
-            "I'd prefer not to have children",
-            "I'm open to discussion with my partner",
+            "Very important",
+            "Somewhat important",
+            "I value character over career status",
         ],
     },
     {
         id: 7,
-        question: "Where would you ideally settle after marriage?",
+        question: "Are you currently managing any significant financial commitments (e.g., family support, business loans) that a partner should be aware of?",
         type: "single",
         options: [
-            "In my current city / state",
-            "Wherever my partner is based",
-            "Abroad (diaspora)",
-            "Open to relocating for the right person",
+            "Yes, and I'm comfortable disclosing this to a serious partner",
+            "Yes, but I'd prefer to discuss it at the right time",
+            "No significant commitments",
         ],
     },
     {
         id: 8,
-        question: "How do you feel about your partner maintaining opposite-gender friendships?",
+        question: "On a scale of 1–5, how central is your religious practice to your daily life and decision-making?",
         type: "single",
-        options: [
-            "Completely fine — trust is the foundation",
-            "Fine with boundaries and transparency",
-            "I'd prefer those friendships to be minimal",
-            "I'm not comfortable with it",
-        ],
+        options: ["1 — Not central at all", "2", "3 — Moderately central", "4", "5 — Central to everything I do"],
     },
     {
         id: 9,
-        question: "What is your approach to faith / spirituality in marriage?",
+        question: "Would you consider a partner from a different denomination or faith background if your core values aligned?",
         type: "single",
         options: [
-            "We must share the same faith and practice together",
-            "Similar values matter more than the same denomination",
-            "I'm open to interfaith marriage",
-            "Spirituality is personal — I don't need alignment",
+            "Strictly my faith only",
+            "Open to different denominations",
+            "Open to other faiths",
         ],
     },
     {
         id: 10,
-        question: "How would you handle a serious health revelation about your partner?",
+        question: "How involved do you expect your extended family to be in your marital decisions?",
         type: "single",
         options: [
-            "It depends on the condition — I'd need more information",
-            "I'd support them regardless if we're committed",
-            "I'd consult family and seek medical advice first",
-            "Honesty about health is a dealbreaker — they should have disclosed early",
+            "Highly involved (Traditional)",
+            "Consulted but we decide independently",
+            "Fully independent",
         ],
     },
     {
         id: 11,
-        question: "What is one non-negotiable quality you need in a life partner?",
-        type: "text",
-        options: [],
-        placeholder: "e.g., Honesty, faith, ambition, kindness...",
+        question: "When a disagreement arises, how do you typically handle it?",
+        type: "single",
+        options: [
+            "Address it immediately",
+            "Take space to reflect first",
+            "Prefer a mediator or counselor",
+        ],
     },
     {
         id: 12,
-        question: "Is there anything else you'd like your future partner to know about you?",
+        question: "In one sentence, what is the one character trait that is absolutely mandatory for your future spouse?",
         type: "text",
         options: [],
-        placeholder: "Share something meaningful — your values, your hopes, or what makes you who you are...",
+        placeholder: "e.g., Honesty, God-fearing, emotional maturity, ambition...",
     },
 ];
 export function ReviewPage() {
@@ -400,7 +377,7 @@ export function ReviewPage() {
     const answeredCount = Object.keys(answers).length;
     // Main waiting / review screen
     if (!showQuestionnaire && !submitted) {
-        return (_jsxs("div", { children: [_jsx("section", { className: "section-shell pb-10 pt-16", children: _jsx(SectionHeading, { eyebrow: "Step 4 of 4 \u2014 Under review", title: "Your documents are being reviewed", description: "While you wait, complete the Marriage Readiness Questionnaire to strengthen your profile." }) }), _jsx("section", { className: "section-shell pt-0", children: _jsx(VerificationProgress, { current: 3 }) }), _jsx("section", { className: "section-shell pt-0", children: _jsx(RevealOnScroll, { children: _jsxs("div", { className: "surface-card p-8 sm:p-10", children: [_jsxs("div", { className: "mx-auto max-w-lg text-center", children: [_jsxs("div", { className: "relative mx-auto mb-6 h-24 w-24", children: [_jsx("div", { className: "absolute inset-0 animate-ping rounded-full bg-brand-clay/20" }), _jsx("div", { className: "relative flex h-24 w-24 items-center justify-center rounded-full bg-brand-clay/10", children: _jsx(ShieldCheck, { className: "text-brand-clay", size: 40 }) })] }), _jsx("h3", { className: "font-display text-2xl font-semibold text-brand-ink", children: "Verification in progress" }), _jsx("p", { className: "mt-3 text-sm leading-7 text-brand-forest/70", children: "Our team is reviewing your identity documents. This typically takes 24-48 hours. You'll receive an email when it's complete." }), _jsx("div", { className: "mx-auto mt-8 max-w-sm text-left", children: [
+        return (_jsxs("div", { children: [_jsx("section", { className: "section-shell pb-10 pt-16", children: _jsx(SectionHeading, { eyebrow: "Step 4 of 4 \u2014 Under review", title: "Your documents are being reviewed", description: "While you wait, complete the Marriage Readiness Questionnaire to strengthen your profile." }) }), _jsx("section", { className: "section-shell pt-0", children: _jsx(VerificationProgress, { current: 3 }) }), _jsx("section", { className: "section-shell pt-0", children: _jsx(RevealOnScroll, { children: _jsxs("div", { className: "surface-card p-8 sm:p-10", children: [_jsxs("div", { className: "mx-auto max-w-lg text-center", children: [_jsxs("div", { className: "relative mx-auto mb-6 h-24 w-24", children: [_jsx("div", { className: "absolute inset-0 animate-ping rounded-full bg-brand-clay/20" }), _jsx("div", { className: "relative flex h-24 w-24 items-center justify-center rounded-full bg-brand-clay/10", children: _jsx(ShieldCheck, { className: "text-brand-clay", size: 40 }) })] }), _jsx("h3", { className: "font-display text-2xl font-semibold text-brand-ink", children: "Verification in progress" }), _jsx("p", { className: "mt-3 text-sm leading-7 text-brand-forest/70", children: "Our team is reviewing your identity documents. We manually review every profile to ensure a high-trust environment. Expect approval within 12\u201324 hours." }), _jsx("div", { className: "mx-auto mt-8 max-w-sm text-left", children: [
                                                 {
                                                     label: "Documents uploaded",
                                                     done: true,
@@ -419,7 +396,7 @@ export function ReviewPage() {
                                                             ? "text-brand-ink"
                                                             : item.active
                                                                 ? "text-brand-clay"
-                                                                : "text-brand-forest/40"}`, children: item.label })] }, item.label))) })] }), _jsxs("div", { className: "mt-10 rounded-[2rem] border border-brand-clay/20 bg-brand-clay/5 p-8 text-center", children: [_jsx("h4", { className: "font-display text-lg font-semibold text-brand-ink", children: "While you wait \u2014 complete your Marriage Readiness Questionnaire" }), _jsx("p", { className: "mt-2 text-sm leading-6 text-brand-forest/70", children: "12 thoughtful questions that help us understand your values, expectations, and compatibility factors. This directly improves your match quality." }), _jsxs("button", { className: "mt-6 inline-flex items-center gap-2 rounded-full bg-brand-clay px-8 py-3 text-sm font-semibold text-white transition hover:bg-brand-gold", onClick: () => setShowQuestionnaire(true), type: "button", children: ["Start Questionnaire ", _jsx(ChevronRight, { size: 16 })] })] })] }) }) })] }));
+                                                                : "text-brand-forest/40"}`, children: item.label })] }, item.label))) })] }), _jsxs("div", { className: "mt-10 rounded-[2rem] border border-brand-clay/20 bg-brand-clay/5 p-8 text-center", children: [_jsx("h4", { className: "font-display text-lg font-semibold text-brand-ink", children: "While you wait \u2014 complete your Marriage Readiness Questionnaire" }), _jsx("p", { className: "mt-2 text-sm leading-6 text-brand-forest/70", children: "Your answers help us shape better, deeper matches. This directly improves the quality of people we connect you with." }), _jsxs("button", { className: "mt-6 inline-flex items-center gap-2 rounded-full bg-brand-clay px-8 py-3 text-sm font-semibold text-white transition hover:bg-brand-gold", onClick: () => setShowQuestionnaire(true), type: "button", children: ["Start Questionnaire ", _jsx(ChevronRight, { size: 16 })] })] })] }) }) })] }));
     }
     // Submitted state
     if (submitted) {

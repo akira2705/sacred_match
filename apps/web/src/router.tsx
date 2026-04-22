@@ -102,11 +102,11 @@ function getTokenRole(token: string | null): string | null {
 
 function RequireAuth({ children }: { children: ReactElement }) {
   const location = useLocation();
-  const token = typeof window !== "undefined" ? window.localStorage.getItem("sacred-match-token") : null;
+  const token = typeof window !== "undefined" ? window.localStorage.getItem("spousia-token") : null;
 
   if (!isValidJwt(token)) {
     // Clear any stale/invalid token
-    if (typeof window !== "undefined") window.localStorage.removeItem("sacred-match-token");
+    if (typeof window !== "undefined") window.localStorage.removeItem("spousia-token");
     return <Navigate replace state={{ from: location.pathname }} to="/login" />;
   }
 
@@ -115,10 +115,10 @@ function RequireAuth({ children }: { children: ReactElement }) {
 
 function RequireAdmin({ children }: { children: ReactElement }) {
   const location = useLocation();
-  const token = typeof window !== "undefined" ? window.localStorage.getItem("sacred-match-token") : null;
+  const token = typeof window !== "undefined" ? window.localStorage.getItem("spousia-token") : null;
 
   if (!isValidJwt(token)) {
-    if (typeof window !== "undefined") window.localStorage.removeItem("sacred-match-token");
+    if (typeof window !== "undefined") window.localStorage.removeItem("spousia-token");
     return <Navigate replace state={{ from: location.pathname }} to="/login" />;
   }
 
@@ -138,7 +138,7 @@ const privacySections = [
 ];
 
 const termsSections = [
-  { heading: "Platform use", body: ["Sacred Match is intended for serious, marriage-minded relationship discovery.", "Harassment, scams, impersonation, and abuse of verification systems are prohibited."] },
+  { heading: "Platform use", body: ["Spousia is intended for serious, marriage-minded relationship discovery.", "Harassment, scams, impersonation, and abuse of verification systems are prohibited."] },
   { heading: "Safety enforcement", body: ["We may review reports, apply warnings, suspend accounts, or remove access when safety policies are violated.", "Users are expected to keep early high-risk interactions on-platform where safety tools exist."] }
 ];
 
@@ -164,7 +164,7 @@ export const router = createBrowserRouter([
       { path: "blog/:slug", element: <BlogArticlePage /> },
       { path: "faq", element: <FaqPage /> },
       { path: "contact", element: <ContactPage /> },
-      { path: "privacy", element: <LegalPage eyebrow="Privacy policy" title="How Sacred Match handles personal data" description="A clear overview of what data the platform collects and how that data supports trust, matching, and safety." sections={privacySections} /> },
+      { path: "privacy", element: <LegalPage eyebrow="Privacy policy" title="How Spousia handles personal data" description="A clear overview of what data the platform collects and how that data supports trust, matching, and safety." sections={privacySections} /> },
       { path: "terms", element: <LegalPage eyebrow="Terms of service" title="Rules for using the platform responsibly" description="These terms focus on serious relationship use, safety, trust, and respectful conduct." sections={termsSections} /> },
       { path: "data-protection", element: <LegalPage eyebrow="Data protection" title="Data handling principles for a trust-sensitive product" description="A summary of the privacy and operational standards expected from the platform." sections={dataProtectionSections} /> },
       { path: "cookies", element: <LegalPage eyebrow="Cookie policy" title="How session and preference storage works" description="A simple explanation of how storage supports authentication and experience continuity." sections={cookieSections} /> },

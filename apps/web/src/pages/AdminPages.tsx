@@ -66,7 +66,7 @@ function AdminHeader({ title, subtitle }: { title: string; subtitle?: string }) 
           <span className="rounded-full border border-brand-clay/25 bg-brand-clay/12 px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-brand-clay">
             Admin
           </span>
-          <span className="text-xs text-brand-forest/40">Sacred Match Moderation</span>
+          <span className="text-xs text-brand-forest/40">Spousia Moderation</span>
         </div>
         <h1 className="mt-3 font-display text-3xl font-semibold text-brand-ink sm:text-4xl">
           {title}

@@ -32,7 +32,7 @@ export type VerificationFlow = {
   currentStage: number;
 };
 
-const VERIFICATION_KEY = "sacred-match-verification";
+const VERIFICATION_KEY = "spousia-verification";
 
 export const defaultVerificationFlow: VerificationFlow = {
   intentAnswers: { reason: "", timeline: "", commitment: "", passed: null },
@@ -109,8 +109,8 @@ export type OnboardingDraft = {
   completed: boolean;
 };
 
-const STORAGE_KEY = "sacred-match-onboarding-draft";
-const REMEMBER_KEY = "sacred-match-remembered-login";
+const STORAGE_KEY = "spousia-onboarding-draft";
+const REMEMBER_KEY = "spousia-remembered-login";
 
 export const defaultOnboardingDraft: OnboardingDraft = {
   personal: {

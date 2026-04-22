@@ -1,16 +1,22 @@
 import { Dna, ShieldCheck } from "lucide-react";
 import { GenotypeChecker } from "@/components/GenotypeChecker";
+import { Seo } from "@/components/Seo";
 import { SectionHeading } from "@/components/SectionHeading";
 import { genotypeCompatibilityTable } from "@/lib/genotype";
 
 export function GenotypePage() {
   return (
     <div>
+      <Seo
+        title="Genotype Guide — AA, AS, SS Compatibility"
+        description="Understand genotype compatibility in Nigerian marriages. Spousia integrates AA, AS, and SS genotype awareness privately into the matchmaking process."
+        canonical="https://spousia.ng/genotype-guide"
+      />
       <section className="section-shell pb-10 pt-16">
         <SectionHeading
           eyebrow="Genotype feature"
           title="A medically sensitive feature built into the matchmaking journey"
-          description="Sacred Match treats genotype compatibility as an informed-decision layer with privacy, education, and counseling-oriented product language."
+          description="Spousia treats genotype compatibility as an informed-decision layer with privacy, education, and counseling-oriented product language."
         />
       </section>
 

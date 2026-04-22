@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useRef, useState } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import clsx from "clsx";
 import { LogOut, Menu, ShieldCheck, UserCircle2, X } from "lucide-react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
@@ -96,6 +96,55 @@ function currentLabel(pathname: string, items: NavItem[]) {
   return items.find((item) => matchesPath(pathname, item))?.label ?? items[0]?.label ?? "Menu";
 }
 
+/** Animated mobile nav item: magnetic cursor tracking + scale-down on hover */
+function MobileNavItem({ item, closeMobileMenu }: { item: NavItem; closeMobileMenu: () => void }) {
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+  const [hovered, setHovered] = useState(false);
+
+  function handleMouseMove(e: React.MouseEvent<HTMLAnchorElement>) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    setPos({ x: (e.clientX - cx) * 0.1, y: (e.clientY - cy) * 0.1 });
+  }
+
+  function handleMouseEnter() {
+    setHovered(true);
+  }
+
+  function handleMouseLeave() {
+    setPos({ x: 0, y: 0 });
+    setHovered(false);
+  }
+
+  const isMoving = pos.x !== 0 || pos.y !== 0;
+
+  return (
+    <NavLink
+      end={item.end}
+      to={item.href}
+      onClick={closeMobileMenu}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        transform: `translate(${pos.x}px, ${pos.y}px) scale(${hovered ? 0.96 : 1})`,
+        transition: isMoving
+          ? "transform 0.12s ease-out, background-color 0.3s, color 0.3s, border-color 0.3s"
+          : "transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94), background-color 0.3s, color 0.3s, border-color 0.3s",
+      }}
+      className={({ isActive }) =>
+        clsx(
+          "block rounded-2xl border border-transparent bg-white/55 px-4 py-3 text-sm font-semibold text-brand-forest",
+          isActive && "border-brand-ink/10 bg-brand-ink text-[#C9A227] shadow-[0_8px_24px_rgba(43,27,110,0.22)]",
+        )
+      }
+    >
+      {item.label}
+    </NavLink>
+  );
+}
+
 export function NavBar() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -104,7 +153,7 @@ export function NavBar() {
   const closeMobileMenu = useUiStore((state) => state.closeMobileMenu);
   const pathname = location.pathname;
   const routeMode = detectRouteMode(pathname);
-  const isSignedIn = typeof window !== "undefined" && Boolean(window.localStorage.getItem("sacred-match-token"));
+  const isSignedIn = typeof window !== "undefined" && Boolean(window.localStorage.getItem("spousia-token"));
 
   const rowRef = useRef<HTMLDivElement | null>(null);
   const brandRef = useRef<HTMLAnchorElement | null>(null);
@@ -164,7 +213,8 @@ export function NavBar() {
 
   function handleLogout() {
     if (typeof window !== "undefined") {
-      window.localStorage.removeItem("sacred-match-token");
+      window.localStorage.removeItem("spousia-token");
+      window.localStorage.removeItem("spousia-role");
     }
 
     closeMobileMenu();
@@ -277,8 +327,23 @@ export function NavBar() {
             )}
             to="/"
           >
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[1.6rem] bg-brand-forest text-xl font-extrabold text-brand-cream shadow-[0_18px_40px_rgba(43,27,110,0.28)] transition-transform duration-500 group-hover:-rotate-3 group-hover:scale-[1.04]">
-              SM
+            <img
+              src="/spousia-logo.png"
+              alt="Spousia"
+              className="h-14 w-14 shrink-0 rounded-[1.6rem] object-cover shadow-[0_18px_40px_rgba(43,27,110,0.28)] transition-transform duration-500 group-hover:-rotate-3 group-hover:scale-[1.04]"
+              onError={(e) => {
+                // Fallback to text badge if logo not yet placed
+                const target = e.currentTarget;
+                target.style.display = "none";
+                const fallback = target.nextElementSibling as HTMLElement | null;
+                if (fallback) fallback.style.display = "flex";
+              }}
+            />
+            <div
+              className="hidden h-14 w-14 shrink-0 items-center justify-center rounded-[1.6rem] bg-brand-forest text-xl font-extrabold text-brand-cream shadow-[0_18px_40px_rgba(43,27,110,0.28)] transition-transform duration-500 group-hover:-rotate-3 group-hover:scale-[1.04]"
+              aria-hidden="true"
+            >
+              S
             </div>
             <div className="min-w-0">
               <p
@@ -289,7 +354,7 @@ export function NavBar() {
                     : "text-[clamp(1.55rem,1.9vw,1.95rem)]",
                 )}
               >
-                Sacred Match
+                Spousia
               </p>
               {routeMode !== "admin" ? (
                 <p
@@ -443,20 +508,7 @@ export function NavBar() {
           <div className="border-t border-brand-forest/10 bg-brand-cream/90">
             <nav className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-5 sm:px-6">
               {navItems.map((item) => (
-                <NavLink
-                  key={item.href}
-                  className={({ isActive }) =>
-                    clsx(
-                      "rounded-2xl border border-transparent bg-white/55 px-4 py-3 text-sm font-semibold text-brand-forest transition-all duration-300 hover:border-brand-forest/10 hover:bg-white",
-                      isActive && "border-brand-forest/10 bg-brand-forest text-white hover:bg-brand-forest",
-                    )
-                  }
-                  end={item.end}
-                  onClick={closeMobileMenu}
-                  to={item.href}
-                >
-                  {item.label}
-                </NavLink>
+                <MobileNavItem key={item.href} item={item} closeMobileMenu={closeMobileMenu} />
               ))}
 
               <div className="grid gap-3 pt-2">

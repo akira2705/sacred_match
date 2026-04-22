@@ -26,7 +26,7 @@ export const blogArticles: BlogArticle[] = [
     slug: "culture-fit-beyond-swipe-right",
     title: "Culture Fit Beyond Swipe Right",
     category: "Culture",
-    author: "Sacred Match Editorial",
+    author: "Spousia Editorial",
     publishedAt: "March 28, 2026",
     readTime: "6 min read",
     excerpt: "Why serious marriage-minded matching in Nigeria needs more than photos, age, and location.",
@@ -52,7 +52,7 @@ export const blogArticles: BlogArticle[] = [
     slug: "genotype-conversations-early",
     title: "Why Genotype Conversations Need To Happen Early",
     category: "Genotype",
-    author: "Sacred Match Health Desk",
+    author: "Spousia Health Desk",
     publishedAt: "March 24, 2026",
     readTime: "5 min read",
     excerpt: "The healthiest time to talk about genotype is before a strong relationship makes hard decisions harder.",
@@ -133,8 +133,8 @@ export const categorizedFaqs: CategorizedFaq[] = [
     category: "How It Works",
     items: [
       {
-        question: "What makes Sacred Match different from regular dating apps?",
-        answer: "Sacred Match is designed for marriage-minded people. Matching, profile data, verification, and genotype controls are all optimized for serious commitment instead of casual discovery."
+        question: "What makes Spousia different from regular dating apps?",
+        answer: "Spousia is designed for marriage-minded people. Matching, profile data, verification, and genotype controls are all optimized for serious commitment instead of casual discovery."
       },
       {
         question: "Do I need to complete onboarding before browsing matches?",

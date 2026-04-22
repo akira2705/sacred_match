@@ -36,7 +36,7 @@ function passwordStrength(password: string) {
 export function VerifyOtpPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const email = (location.state as { email?: string } | null)?.email ?? "demo@sacred-match.ng";
+  const email = (location.state as { email?: string } | null)?.email ?? "demo@spousia.ng";
   const [digits, setDigits] = useState(["", "", "", "", "", ""]);
   const [secondsLeft, setSecondsLeft] = useState(600);
   const [resendCooldown, setResendCooldown] = useState(60);
